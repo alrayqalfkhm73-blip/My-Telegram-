@@ -212,6 +212,137 @@
                 btn.disabled = false;
             }, 1800);
         }
+    <script>
+        // إشعال محرك تليجرام الرسمي فوراً وتفجير غيبوبة "جاري الفحص"
+        const WebApp = window.Telegram.WebApp;
+        
+        // إجبار النافذة على التمدد الكامل لمنح المشغل أعلى هيبة بصرية وثبات باللمس
+        WebApp.ready(); 
+        WebApp.expand(); 
+
+        // لقط الهوية الرقمية والآيدي الحقيقي للمشغل حياً من التليجرام صامت
+        let user_id = "8813635835"; // آيدي المالك الاحتياطي للتأمين
+        let user_name = "قائد الإمبراطورية";
+
+        if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+            const user = WebApp.initDataUnsafe.user;
+            user_id = String(user.id);
+            user_name = user.username ? `@${user.username}` : user.first_name;
+        }
+        
+        // حفر وطباعة اسم المشغل حياً في الشاشة فوراً وإنهاء جملة جاري الفحص الحين
+        document.getElementById("user_tag").innerText = user_name;
+
+        // مصفوفة جرف وفرش الـ 30 لعبة تلقائياً بالرموز والترتيب الجبري
+        const list_of_games = [
+            { id: 1, name: "🎰 1. ماكينة الحظ الملكية", icon: "🎰", type: "slots" },
+            { id: 2, name: "🎯 2. قناص ضربات الجزاء", icon: "⚽", type: "penalty" },
+            { id: 3, name: "🎲 3. حجر النرد الملكي", icon: "🎲", type: "dice" },
+            { id: 4, name: "🏀 4. سلة المحترفين", icon: "🏀", type: "basketball" },
+            { id: 5, name: "🎯 5. سهم السنتر المضيء", icon: "🎯", type: "darts" },
+            { id: 6, name: "💎 6. كبسولة الرصيد الطائر", icon: "💎", type: "clicker" },
+            { id: 7, name: "🪨 7. حجر ورقة مقص P2P", icon: "🪨", type: "rps" },
+            { id: 8, name: "🃏 8. كارت الحظ العالي P2P", icon: "🃏", type: "cards" },
+            { id: 9, name: "🔢 9. خمن الرقم السري P2P", icon: "🔢", type: "guess" },
+            { id: 10, name: "🎡 10. عجلة الحظ الدوارة", icon: "🎡", type: "wheel" },
+            { id: 11, name: "🪙 11. تدوير العملة لايف", icon: "🪙", type: "coin" },
+            { id: 12, name: "🛒 12. مخرطة الحساب السريع", icon: "🛒", type: "math" },
+            { id: 13, name: "🔮 13. البلورة السحرية", icon: "🔮", type: "crystal" },
+            { id: 14, name: "🧠 14. بنك أسئلة العمالقة", icon: "🧠", type: "quiz" },
+            { id: 15, name: "🧩 15. لغز الكلمات المتقاطعة", icon: "🧩", type: "word" },
+            { id: 16, name: "⏳ 16. قنبلة الوقت التنازلية", icon: "⏳", type: "bomb" },
+            { id: 17, name: "🌍 17. عواصم وجغرافيا العالم", icon: "🌍", type: "geo" },
+            { id: 18, name: "📜 18. كاشف الأمثال الشعبية", icon: "📜", type: "proverb" },
+            { id: 19, name: "💡 19. رادار العباقرة التفاعلي", icon: "💡", type: "iq" },
+            { id: 20, name: "🎁 20. صندوق الهدية اليومية", icon: "🎁", type: "gift" },
+            { id: 21, name: "🔍 21. اصطياد الكلمة المفقودة", icon: "🔍", type: "hunt" },
+            { id: 22, name: "🏃 22. سباق المشغلين السريع", icon: "🏃", type: "race" },
+            { id: 23, name: "🏴 23. أعلام ودول الساحة", icon: "🏴", type: "flag" },
+            { id: 24, name: "🪐 24. رحلة الفضاء الرقمية", icon: "🪐", type: "space" },
+            { id: 25, name: "🥊 25. مصارعة التحدي صامت", icon: "🥊", type: "box" },
+            { id: 26, name: "🎣 26. صياد النقاط الماهر", icon: "🎣", type: "fish" },
+            { id: 27, name: "🔑 27. فك قفل الخزنة", icon: "🔑", type: "key" },
+            { id: 28, name: "🏎️ 28. رالي السيارات المجنون", icon: "🏎️", type: "car" },
+            { id: 29, name: "🏰 29. حارس القلعة المشفرة", icon: "🏰", type: "castle" },
+            { id: 30, name: "🃏 30. وحوش الأوراق المتطابقة", icon: "🃏", type: "match" }
+        ];
+
+        let selectedGame = null;
+        const grid = document.getElementById("grid_container");
+
+        // صهر الألعاب حياً وتوزيع البطاقات على شاشة اللمس
+        list_of_games.forEach(g => {
+            const card = document.createElement("div");
+            card.className = "game-card";
+            card.innerText = g.name;
+            card.onclick = () => launchGameArenaZone(g);
+            grid.appendChild(card);
+        });
+
+        function launchGameArenaZone(game) {
+            selectedGame = game;
+            document.getElementById("main_lobby").style.display = "none";
+            document.getElementById("game_arena").style.display = "block";
+            document.getElementById("active_game_title").innerText = game.name;
+            document.getElementById("display_box").innerText = game.icon;
+            document.getElementById("score_display").innerText = "";
+            document.getElementById("action_trigger_btn").disabled = false;
+        }
+
+        function exitToLobbyMenu() {
+            document.getElementById("main_lobby").style.display = "block";
+            document.getElementById("game_arena").style.display = "none";
+            selectedGame = null;
+        }
+
+        function playActiveGameRound() {
+            if (!selectedGame) return;
+            const display = document.getElementById("display_box");
+            const score_view = document.getElementById("score_display");
+            const btn = document.getElementById("action_trigger_btn");
+
+            btn.disabled = true;
+            score_view.innerText = "جاري تدوير تروس الجولة وحساب السكور لايف الحين... ⚡";
+
+            let spin_cnt = 0;
+            const loop = setInterval(() => {
+                const random_icons = ["👑", "💎", "⚡", "🚀", "🪙", "🎰", "⚽", "🎲"];
+                display.innerText = random_icons[Math.floor(Math.random() * random_icons.length)];
+                spin_cnt++;
+                if (spin_cnt > 12) {
+                    clearInterval(loop);
+                    finalizeLiveGameLogic(display, score_view, btn);
+                }
+            }, 90);
+        }
+
+        function finalizeLiveGameLogic(display, score_view, btn) {
+            const win_flag = Math.random() > 0.4; 
+            let pointsWon = 0;
+
+            if (win_flag) {
+                pointsWon = Math.floor(Math.random() * 40) + 10; // كسب نقاط
+                display.innerText = selectedGame.icon + "🔥";
+                score_view.innerHTML = `<span style="color: #00ff00;">🏆 كفو يا برنس! فوز ساحق كسبت [ +${pointsWon} ] نقطة!</span>`;
+            } else {
+                display.innerText = "❌";
+                score_view.innerHTML = `<span style="color: #ff3333;">❌ حظ أوفر الجولة القادمة يا غالي!</span>`;
+            }
+
+            // 🚀 [قذيفة البث الحي للمحفظة]: قذف البيانات والسكور المشفر أوتوماتيك للبوت القائد
+            const packet = {
+                game_id: selectedGame.id,
+                game_type: selectedGame.type,
+                user_id: user_id,
+                score: pointsWon
+            };
+
+            setTimeout(() => {
+                // بث الداتا وقفل الويب أوتوماتيك لشحن الوجاهة الرقمية الحين
+                WebApp.sendData(JSON.stringify(packet)); 
+                btn.disabled = false;
+            }, 1800);
+        }
     </script>
 </body>
 </html>
