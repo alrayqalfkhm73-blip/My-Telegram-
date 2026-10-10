@@ -72,13 +72,21 @@
         WebApp.expand(); 
 
         // سحب وتأمين الهوية الرقمية
-        let final_user_id = "8813635835"; 
         let final_user_name = "قائد الإمبراطورية";
 
-        if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
-            const tgUser = WebApp.initDataUnsafe.user;
-            final_user_id = String(tgUser.id);
-            final_user_name = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
+if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+    const tgUser = WebApp.initDataUnsafe.user;
+    final_user_id = String(tgUser.id);
+    final_user_name = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
+}
+let final_user_id = "8813635835"; 
+let final_user_name = "قائد الإمبراطورية";
+
+if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+    const tgUser = WebApp.initDataUnsafe.user;
+    final_user_id = String(tgUser.id);
+    final_user_name = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
+}
         }
         
         // طباعة الاسم وسحق غيبوبة جاري لقط الهوية
