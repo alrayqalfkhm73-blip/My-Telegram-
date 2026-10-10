@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>𓆩♚𓆪 صالة ألعاب العمالقة الكبرى الـ 30 𓆩♚𓆪</title>
-    <!-- 📡 ربط الـ SDK الرسمي والآمن لتليجرام للقط الحساب وبث السكور حياً للخزنة -->
+    
+    <!-- 📡 الصب الجبري لمكتبة تليجرام الرسمية في رأس الصفحة لنسف غيبوبة جاري الفحص -->
     <script src="https://telegram.org"></script>
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
         body {
@@ -21,53 +23,20 @@
         .header { text-align: center; margin-bottom: 15px; width: 100%; max-width: 400px; }
         .header h1 { font-size: 22px; color: #ffd700; text-shadow: 0 0 12px #ffd700; margin-bottom: 5px; }
         .header p { font-size: 12px; color: #00ffff; text-shadow: 0 0 8px #00ffff; }
-        
-        /* شاشة صالة العرض الرئيسية (القائمة) */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .game-card {
             background: linear-gradient(135deg, #2b0054 0%, #15002a 100%);
-            border: 2px solid #ff007f;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 10px #ff007f;
-            transition: all 0.1s ease;
+            border: 2px solid #ff007f; border-radius: 12px; padding: 15px;
+            text-align: center; font-size: 14px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 0 10px #ff007f; transition: all 0.1s ease;
         }
         .game-card:active { transform: scale(0.95); box-shadow: 0 0 4px #ff007f; }
-
-        /* شاشة اللعبة النشطة المحبوسة بالداخل */
         .arena-zone {
-            display: none;
-            width: 100%;
-            max-width: 360px;
-            background: #0d0022;
-            border: 3px solid #00ffff;
-            border-radius: 16px;
-            box-shadow: 0 0 20px #00ffff;
-            padding: 20px;
-            text-align: center;
-            position: relative;
+            display: none; width: 100%; max-width: 360px; background: #0d0022;
+            border: 3px solid #00ffff; border-radius: 16px; box-shadow: 0 0 20px #00ffff;
+            padding: 20px; text-align: center; position: relative;
         }
-        .back-btn {
-            background: #ff3333;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .back-btn { background: #ff3333; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; }
         .game-panel-interactive { font-size: 50px; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
         .action-btn {
             background: linear-gradient(to bottom, #00ffcc 0%, #00b399 100%);
@@ -83,7 +52,7 @@
     <div id="main_lobby">
         <div class="header">
             <h1>𓆩♚𓆪 صَالَةُ أَلْعَابِ العَمَالِقَةِ الـ 30 𓆩♚𓆪</h1>
-            <p>المشغل الحالي: <span id="user_tag">جاري الفحص...</span></p>
+            <p>المشغل الحالي: <span id="user_tag" style="color: #ffd700; font-weight: bold;">جاري لقط الهوية...</span></p>
         </div>
         <div class="games-grid" id="grid_container"></div>
     </div>
@@ -96,144 +65,23 @@
         <div id="score_display" class="score-board"></div>
         <button class="back-btn" onclick="exitToLobbyMenu()">↩️ انسحاب وعودة للقائمة</button>
     </div>
+
     <script>
+        // إجبار المحرك على تهيئة تليجرام فوراً حياً
         const WebApp = window.Telegram.WebApp;
-        WebApp.ready(); WebApp.expand(); // تمديد الشاشة بالكامل لهيبة بصرية عالية
-
-        const user = WebApp.initDataUnsafe.user;
-        document.getElementById("user_tag").innerText = user ? (user.username ? `@${user.username}` : user.first_name) : "قائد الإمبراطورية";
-
-        // 🗺️ مصفوفة تعريف الـ 30 لعبة بالكامل المحقونة بالرموز والترتيب للفرش الفوري
-        const list_of_games = [
-            { id: 1, name: "🎰 1. ماكينة الحظ الملكية", icon: "🎰", type: "slots" },
-            { id: 2, name: "🎯 2. قناص ضربات الجزاء", icon: "⚽", type: "penalty" },
-            { id: 3, name: "🎲 3. حجر النرد الملكي", icon: "🎲", type: "dice" },
-            { id: 4, name: "🏀 4. سلة المحترفين", icon: "🏀", type: "basketball" },
-            { id: 5, name: "🎯 5. سهم السنتر المضيء", icon: "🎯", type: "darts" },
-            { id: 6, name: "💎 6. كبسولة الرصيد الطائر", icon: "💎", type: "clicker" },
-            { id: 7, name: "🪨 7. حجر ورقة مقص P2P", icon: "🪨", type: "rps" },
-            { id: 8, name: "🃏 8. كارت الحظ العالي P2P", icon: "🃏", type: "cards" },
-            { id: 9, name: "🔢 9. خمن الرقم السري P2P", icon: "🔢", type: "guess" },
-            { id: 10, name: "🎡 10. عجلة الحظ الدوارة", icon: "🎡", type: "wheel" },
-            { id: 11, name: "🪙 11. تدوير العملة لايف", icon: "🪙", type: "coin" },
-            { id: 12, name: "🧮 12. مخرطة الحساب السريع", icon: "🧮", type: "math" },
-            { id: 13, name: "🔮 13. البلورة السحرية", icon: "🔮", type: "crystal" },
-            { id: 14, name: "🧠 14. بنك أسئلة العمالقة", icon: "🧠", type: "quiz" },
-            { id: 15, name: "🧩 15. لغز الكلمات المتقاطعة", icon: "🧩", type: "word" },
-            { id: 16, name: "⏳ 16. قنبلة الوقت التنازلية", icon: "⏳", type: "bomb" },
-            { id: 17, name: "🌍 17. عواصم وجغرافيا العالم", icon: "🌍", type: "geo" },
-            { id: 18, name: "📜 18. كاشف الأمثال الشعبية", icon: "📜", type: "proverb" },
-            { id: 19, name: "💡 19. رادار العباقرة التفاعلي", icon: "💡", type: "iq" },
-            { id: 20, name: "🎁 20. صندوق الهدية اليومية", icon: "🎁", type: "gift" },
-            { id: 21, name: "🔍 21. اصطياد الكلمة المفقودة", icon: "🔍", type: "hunt" },
-            { id: 22, name: "🏃 22. سباق المشغلين السريع", icon: "🏃", type: "race" },
-            { id: 23, name: "🏴 23. أعلام ودول الساحة", icon: "🏴", type: "flag" },
-            { id: 24, name: "🪐 24. رحلة الفضاء الرقمية", icon: "🪐", type: "space" },
-            { id: 25, name: "🥊 25. مصارعة التحدي صامت", icon: "🥊", type: "box" },
-            { id: 26, name: "🎣 26. صياد النقاط الماهر", icon: "🎣", type: "fish" },
-            { id: 27, name: "🔑 27. فك قفل الخزنة", icon: "🔑", type: "key" },
-            { id: 28, name: "🏎️ 28. رالي السيارات المجنون", icon: "🏎️", type: "car" },
-            { id: 29, name: "🏰 29. حارس القلعة المشفرة", icon: "🏰", type: "castle" },
-            { id: 30, name: "🃏 30. وحوش الأوراق المتطابقة", icon: "🃏", type: "match" }
-        ];
-
-        let selectedGame = null;
-        const grid = document.getElementById("grid_container");
-
-        // فرش الـ 30 لعبة تلقائياً على واجهة اللمس فور الإقلاع النظيف
-        list_of_games.forEach(g => {
-            const card = document.createElement("div");
-            card.className = "game-card";
-            card.innerText = g.name;
-            card.onclick = () => launchGameArenaZone(g);
-            grid.appendChild(card);
-        });
-
-        function launchGameArenaZone(game) {
-            selectedGame = game;
-            document.getElementById("main_lobby").style.display = "none";
-            document.getElementById("game_arena").style.display = "block";
-            document.getElementById("active_game_title").innerText = game.name;
-            document.getElementById("display_box").innerText = game.icon;
-            document.getElementById("score_display").innerText = "";
-            document.getElementById("action_trigger_btn").disabled = false;
-        }
-
-        function exitToLobbyMenu() {
-            document.getElementById("main_lobby").style.display = "block";
-            document.getElementById("game_arena").style.display = "none";
-            selectedGame = null;
-        }
-
-        function playActiveGameRound() {
-            if (!selectedGame) return;
-            const display = document.getElementById("display_box");
-            const score_view = document.getElementById("score_display");
-            const btn = document.getElementById("action_trigger_btn");
-
-            btn.disabled = true;
-            score_view.innerText = "جاري تدوير تروس الجولة وحساب السكور لايف الحين... ⚡";
-
-            let spin_cnt = 0;
-            const loop = setInterval(() => {
-                const random_icons = ["👑", "💎", "⚡", "🚀", "🪙", "🎰", "⚽", "🎲"];
-                display.innerText = random_icons[Math.floor(Math.random() * random_icons.length)];
-                spin_cnt++;
-                if (spin_cnt > 12) {
-                    clearInterval(loop);
-                    finalizeLiveGameLogic(display, score_view, btn);
-                }
-            }, 90);
-        }
-
-        function finalizeLiveGameLogic(display, score_view, btn) {
-            const win_flag = Math.random() > 0.4; 
-            let pointsWon = 0;
-
-            if (win_flag) {
-                pointsWon = Math.floor(Math.random() * 40) + 10; // كسب ما بين 10 لـ 50 نقطة
-                display.innerText = selectedGame.icon + "🔥";
-                score_view.innerHTML = `<span style="color: #00ff00;">🏆 كفو يا برنس! فوز ساحق كسبت [ +${pointsWon} ] نقطة!</span>`;
-            } else {
-                display.innerText = "❌";
-                score_view.innerHTML = `<span style="color: #ff3333;">❌ حظ أوفر الجولة القادمة يا غالي!</span>`;
-            }
-
-            // 🚀 [قذيفة البث الحي للمحفظة]: قذف البيانات وإغلاق النافذة أوتوماتيك بعد ثانيتين
-            const packet = {
-                game_id: selectedGame.id,
-                game_type: selectedGame.type,
-                user_id: user ? user.id : "8813635835",
-                score: pointsWon
-            };
-
-            setTimeout(() => {
-                WebApp.sendData(JSON.stringify(packet)); 
-                btn.disabled = false;
-            }, 1800);
-        }
-    <script>
-        // إشعال محرك تليجرام الرسمي فوراً وتفجير غيبوبة "جاري الفحص"
-        const WebApp = window.Telegram.WebApp;
-        
-        // إجبار النافذة على التمدد الكامل لمنح المشغل أعلى هيبة بصرية وثبات باللمس
         WebApp.ready(); 
         WebApp.expand(); 
 
-        // لقط الهوية الرقمية والآيدي الحقيقي للمشغل حياً من التليجرام صامت
-        let user_id = "8813635835"; // آيدي المالك الاحتياطي للتأمين
-        let user_name = "قائد الإمبراطورية";
-
+        // سحب واختبار الهوية بشكل جبري ومباشر
+        let user_display = "برنس الساحة";
         if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
-            const user = WebApp.initDataUnsafe.user;
-            user_id = String(user.id);
-            user_name = user.username ? `@${user.username}` : user.first_name;
+            const tgUser = WebApp.initDataUnsafe.user;
+            user_display = tgUser.username ? `@${tgUser.username}` : `${tgUser.first_name}`;
         }
         
-        // حفر وطباعة اسم المشغل حياً في الشاشة فوراً وإنهاء جملة جاري الفحص الحين
-        document.getElementById("user_tag").innerText = user_name;
+        // طباعة الاسم فوراً لإنهاء كراش التعليق البصري
+        document.getElementById("user_tag").innerText = user_display;
 
-        // مصفوفة جرف وفرش الـ 30 لعبة تلقائياً بالرموز والترتيب الجبري
         const list_of_games = [
             { id: 1, name: "🎰 1. ماكينة الحظ الملكية", icon: "🎰", type: "slots" },
             { id: 2, name: "🎯 2. قناص ضربات الجزاء", icon: "⚽", type: "penalty" },
@@ -270,7 +118,6 @@
         let selectedGame = null;
         const grid = document.getElementById("grid_container");
 
-        // صهر الألعاب حياً وتوزيع البطاقات على شاشة اللمس
         list_of_games.forEach(g => {
             const card = document.createElement("div");
             card.className = "game-card";
@@ -321,7 +168,7 @@
             let pointsWon = 0;
 
             if (win_flag) {
-                pointsWon = Math.floor(Math.random() * 40) + 10; // كسب نقاط
+                pointsWon = Math.floor(Math.random() * 40) + 10;
                 display.innerText = selectedGame.icon + "🔥";
                 score_view.innerHTML = `<span style="color: #00ff00;">🏆 كفو يا برنس! فوز ساحق كسبت [ +${pointsWon} ] نقطة!</span>`;
             } else {
@@ -329,21 +176,18 @@
                 score_view.innerHTML = `<span style="color: #ff3333;">❌ حظ أوفر الجولة القادمة يا غالي!</span>`;
             }
 
-            // 🚀 [قذيفة البث الحي للمحفظة]: قذف البيانات والسكور المشفر أوتوماتيك للبوت القائد
             const packet = {
                 game_id: selectedGame.id,
                 game_type: selectedGame.type,
-                user_id: user_id,
+                user_id: user ? String(user.id) : "8813635835",
                 score: pointsWon
             };
 
             setTimeout(() => {
-                // بث الداتا وقفل الويب أوتوماتيك لشحن الوجاهة الرقمية الحين
                 WebApp.sendData(JSON.stringify(packet)); 
                 btn.disabled = false;
             }, 1800);
         }
     </script>
 </body>
-</html>
 
