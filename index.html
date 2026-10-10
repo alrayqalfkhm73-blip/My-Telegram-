@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>𓆩♚𓆪 صالة ألعاب العمالقة الكبرى الـ 30 𓆩♚𓆪</title>
     
-    <!-- 📡 حقن رابط الـ SDK البرمجي الفعلي والصحيح 100% لسحق غيبوبة جاري الفحص للأبد -->
+    <!-- 📡 الصب الجبري لمكتبة تليجرام الرسمية الصحيحة 100% في الرأس -->
     <script src="https://telegram.org"></script>
     
     <style>
@@ -22,7 +22,7 @@
         }
         .header { text-align: center; margin-bottom: 15px; width: 100%; max-width: 400px; }
         .header h1 { font-size: 22px; color: #ffd700; text-shadow: 0 0 12px #ffd700; margin-bottom: 5px; }
-        .header p { font-size: 12px; color: #00ffff; text-shadow: 0 0 8px #00ffff; }
+        .header p { font-size: 13px; color: #00ffff; text-shadow: 0 0 8px #00ffff; }
         .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .game-card {
             background: linear-gradient(135deg, #2b0054 0%, #15002a 100%);
@@ -65,23 +65,26 @@
         <div id="score_display" class="score-board"></div>
         <button class="back-btn" onclick="exitToLobbyMenu()">↩️ انسحاب وعودة للقائمة</button>
     </div>
-
     <script>
-        // إجبار المحرك على تهيئة تليجرام فوراً حياً
+        // تهيئة المحرك والـ SDK حياً فوراً الحين
         const WebApp = window.Telegram.WebApp;
         WebApp.ready(); 
         WebApp.expand(); 
 
-        // سحب واختبار الهوية بشكل جبري ومباشر
-        let user_display = "برنس الساحة";
+        // سحب وتأمين الهوية الرقمية
+        let final_user_id = "8813635835"; 
+        let final_user_name = "قائد الإمبراطورية";
+
         if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
             const tgUser = WebApp.initDataUnsafe.user;
-            user_display = tgUser.username ? `@${tgUser.username}` : `${tgUser.first_name}`;
+            final_user_id = String(tgUser.id);
+            final_user_name = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
         }
         
-        // طباعة الاسم فوراً لإنهاء كراش التعليق البصري
-        document.getElementById("user_tag").innerText = user_display;
+        // طباعة الاسم وسحق غيبوبة جاري لقط الهوية
+        document.getElementById("user_tag").innerText = final_user_name;
 
+        // مصفوفة جرف وفرش الـ 30 لعبة بالكامل
         const list_of_games = [
             { id: 1, name: "🎰 1. ماكينة الحظ الملكية", icon: "🎰", type: "slots" },
             { id: 2, name: "🎯 2. قناص ضربات الجزاء", icon: "⚽", type: "penalty" },
@@ -115,7 +118,6 @@
             { id: 30, name: "🃏 30. وحوش الأوراق المتطابقة", icon: "🃏", type: "match" }
         ];
 
-        let selectedGame = null;
         const grid = document.getElementById("grid_container");
 
         list_of_games.forEach(g => {
@@ -179,7 +181,7 @@
             const packet = {
                 game_id: selectedGame.id,
                 game_type: selectedGame.type,
-                user_id: user ? String(user.id) : "8813635835",
+                user_id: final_user_id,
                 score: pointsWon
             };
 
