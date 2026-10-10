@@ -1,733 +1,725 @@
-<!-- استبدل منطقة الشاشة الافتتاحية وغرفة الألعاب (body) بهذا الهيكل الواقعي المطور الحين -->
-<div id="main_lobby">
-    <div class="header">
-        <h1>𓆩♚𓆪 صَالَةُ أَلْعَابِ العَمَالِقَةِ الـ 30 𓆩♚𓆪</h1>
-        <p>المشغل الحالي: <span id="user_tag" style="color: #ffd700; font-weight: bold;">جاري لقط الهوية...</span></p>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>𓆩♚𓆪 صالة ألعاب العمالقة الواقعية الـ 30 𓆩♚𓆪</title>
+    
+    <!-- 📡 الصب الجبري لمكتبة تليجرام البرمجة الفعالة الصحيحة 100% -->
+    <script src="https://telegram.org"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
+        body {
+            background: radial-gradient(circle, #15002a 0%, #050014 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .header { text-align: center; margin-bottom: 15px; width: 100%; max-width: 400px; }
+        .header h1 { font-size: 22px; color: #ffd700; text-shadow: 0 0 12px #ffd700; margin-bottom: 5px; }
+        .header p { font-size: 13px; color: #00ffff; text-shadow: 0 0 8px #00ffff; }
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 400px; margin-bottom: 20px; }
+        .game-card {
+            background: linear-gradient(135deg, #2b0054 0%, #15002a 100%);
+            border: 2px solid #ff007f; border-radius: 12px; padding: 15px;
+            text-align: center; font-size: 14px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 0 10px #ff007f; transition: all 0.1s ease;
+        }
+        .game-card:active { transform: scale(0.95); box-shadow: 0 0 4px #ff007f; }
+        .arena-zone {
+            display: none; width: 100%; max-width: 380px; background: #0d0022;
+            border: 3px solid #00ffff; border-radius: 16px; box-shadow: 0 0 20px #00ffff;
+            padding: 20px; text-align: center; position: relative;
+        }
+        .back-btn { background: #ff3333; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; width: 100%; }
+        .game-panel-interactive { font-size: 40px; margin: 15px 0; min-height: 70px; display: flex; align-items: center; justify-content: center; background: #050014; border-radius: 8px; border: 1px dashed #ff007f; }
+        .action-btn {
+            background: linear-gradient(to bottom, #00ffcc 0%, #00b399 100%);
+            border: none; border-radius: 25px; color: #000; font-size: 16px; font-weight: bold;
+            padding: 10px 25px; cursor: pointer; box-shadow: 0 0 15px #00ffcc; margin: 5px;
+        }
+        .score-board { font-size: 16px; margin-top: 10px; color: #ffd700; font-weight: bold; }
+        .pad-controls { display: flex; justify-content: space-around; width: 100%; margin-top: 15px; }
+        .pad-btn { background: #ff007f; border: none; border-radius: 8px; color: #fff; padding: 10px 20px; font-weight: bold; font-size: 16px; box-shadow: 0 0 10px #ff007f; }
+        .pad-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <!-- الشاشة الافتتاحية للمشغلين -->
+    <div id="main_lobby">
+        <div class="header">
+            <h1>𓆩♚𓆪 صَالَةُ أَلْعَابِ العَمَالِقَةِ الرَّاقِيَةِ 𓆩♚𓆪</h1>
+            <p>المشغل الحالي: <span id="user_tag" style="color: #ffd700; font-weight: bold;">جاري لقط الهوية...</span></p>
+        </div>
+        <div class="games-grid" id="grid_container"></div>
     </div>
-    <div class="games-grid" id="grid_container"></div>
-</div>
 
-<!-- غرفة عمليات لعبة السلة الواقعية المحقونة بالجرافيك واللمس 60 FPS -->
-<div class="arena-zone" id="game_arena" style="display:none; max-width: 380px;">
-    <h2 id="active_game_title" style="color: #ffd700; text-shadow: 0 0 8px #ffd700; margin-bottom: 10px;">سلة المحترفين 🏀</h2>
-    
-    <!-- لوحة الجرافيك الحية لرسم اللاعب والملعب والكورة -->
-    <canvas id="basketball_canvas" width="340" height="300" style="background: radial-gradient(circle, #1a0033 0%, #050014 100%); border: 2px solid #00ffcc; border-radius: 12px; box-shadow: 0 0 15px #00ffcc;"></canvas>
-    
-    <!-- أزرار التوجيه واللمس الواقعية لمنع اللاج والتقطيع في اليد -->
-    <div style="display: flex; justify-content: space-around; margin-top: 15px; width: 100%;">
-        <button class="action-btn" style="background: #ff007f; box-shadow: 0 0 10px #ff007f; padding: 10px 20px;" ontouchstart="movePlayerLeft()" onmousedown="movePlayerLeft()">◀️ يسار</button>
-        <button class="action-btn" style="background: #00ffcc; color: #000; box-shadow: 0 0 15px #00ffcc; padding: 10px 35px;" onclick="triggerProBasketShot()">🏀 شُوت الحين</button>
-        <button class="action-btn" style="background: #ff007f; box-shadow: 0 0 10px #ff007f; padding: 10px 20px;" ontouchstart="movePlayerRight()" onmousedown="movePlayerRight()">يمين ▶️</button>
-    </div>
-    
-    <div id="score_display" class="score-board" style="margin-top: 15px; color: #ffd700;">السكور الحالي: 0</div>
-    <button class="back-btn" onclick="exitToLobbyMenu()">↩️ انسحاب وعودة للقائمة</button>
-</div>
-    <script>
-// 🏀 تروس إعدادات ومحرك لعبة سلة المحترفين الواقعية باللمس
-let basketCanvas = document.getElementById("basketball_canvas");
-let basketCtx = basketCanvas.getContext("2d");
-
-let playerX = 140; // نقطة انطلاق مجسم اللاعب في السنتر
-let playerY = 240;
-let ballX = 170;   // كرة السلة
-let ballY = 230;
-let isBallShot = false;
-let ballVX = 0;
-let ballVY = 0;
-
-let basketX = 140; // برج وعواميد السلة
-let basketY = 40;
-let basketDirection = 1;
-
-let angleArrow = 0; // سهم التوجيه وزاوية الشوت الديناميكية
-let angleDirection = 1;
-let shotPower = 0;  // عداد طاقة وقوة الرمية المتأرجح
-let powerDirection = 1;
-
-let currentScore = 0;
-
-// محاذاة وربط أزرار التحكم باللمس لمنع التقطيع أو تجمد السيرفر
-function movePlayerLeft() {
-    if (playerX > 10) { playerX -= 15; if (!isBallShot) ballX = playerX + 30; }
-}
-
-function movePlayerRight() {
-    if (playerX < 280) { playerX += 15; if (!isBallShot) ballX = playerX + 30; }
-}
-
-function triggerProBasketShot() {
-    if (isBallShot) return;
-    isBallShot = true;
-    // حساب قذيفة الكرة بناءً على زاوية السهم ومؤشر القوة الحين
-    ballVX = Math.sin(angleArrow) * (5 + shotPower * 5);
-    ballVY = -Math.cos(angleArrow) * (8 + shotPower * 8);
-}
-
-// 🛰️ محرك التحديث الانسيابي (60 FPS) المستند لمعالج الشاشة
-function updateProBasketballFrame() {
-    if (!selectedGame || selectedGame.type !== "basketball") return;
-
-    // تصفير وتنظيف الشاشة دورياً لمنع تسريب الرام أو الـ Memory Leak
-    basketCtx.clearRect(0, 0, basketCanvas.width, basketCanvas.height);
-
-    // 1. حركة سهم التوجيه وعداد القوة التلقائي قبل الرمي
-    if (!isBallShot) {
-        angleArrow += 0.04 * angleDirection;
-        if (angleArrow > 0.8 || angleArrow < -0.8) angleDirection *= -1;
-
-        shotPower += 0.05 * powerDirection;
-        if (shotPower > 1 || shotPower < 0) powerDirection *= -1;
-    }
-
-    // 2. تحديث شبكة وحلقة السلة (الذكاء الاصطناعي يتحرك أوتوماتيك)
-    basketX += 1.5 * basketDirection;
-    if (basketX > 260 || basketX < 40) basketDirection *= -1;
-
-    // 3. مسار وقوانين جاذبية الكرة بعد الشوت
-    if (isBallShot) {
-        ballX += ballVX;
-        ballY += ballVY;
-        ballVY += 0.3; // قوة الجاذبية الأرضية للكرة (Gravity Physics)
-
-        // فحص الاصطدام والهدف (Score Check)
-        if (ballY <= basketY + 15 && ballY >= basketY - 10 && ballX >= basketX && ballX <= basketX + 40 && ballVY > 0) {
-            currentScore += 25;
-            document.getElementById("score_display").innerText = "السكور الحالي: " + currentScore;
-            resetBallState();
-        }
-
-        // إعادة ضبط الكرة إذا خرجت أو سقطت بره الملعب
-        if (ballY > 320 || ballX < -20 || ballX > 360) {
-            resetBallState();
-        }
-    }
-
-    // 🎨 4. رسم الجرافيك النيوني واللاعب والفريق المساعد على الـ Canvas لايف
-    // رسم برج السلة والشبكة
-    basketCtx.fillStyle = "#ff007f";
-    basketCtx.fillRect(basketX, basketY, 60, 6); // اللوحة الخلفية
-    basketCtx.strokeStyle = "#00ffff";
-    basketCtx.lineWidth = 3;
-    basketCtx.strokeRect(basketX + 10, basketY + 6, 40, 15); // الحلقة والشبكة
-
-    // رسم مجسم اللاعب والمساعدين
-    basketCtx.fillStyle = "#ffd700";
-    basketCtx.beginPath();
-    basketCtx.arc(playerX + 30, playerY, 12, 0, Math.PI * 2); // رأس اللاعب الأساسي
-    basketCtx.fill();
-    basketCtx.fillRect(playerX + 25, playerY + 12, 10, 30); // جسم اللاعب
-
-    // رسم سهم زاوية الرمية الفسفوري
-    if (!isBallShot) {
-        basketCtx.strokeStyle = "#00ffcc";
-        basketCtx.lineWidth = 4;
-        basketCtx.beginPath();
-        basketCtx.moveTo(ballX, ballY);
-        basketCtx.lineTo(ballX + Math.sin(angleArrow) * 40, ballY - Math.cos(angleArrow) * 40);
-        basketCtx.stroke();
-    }
-
-    // رسم كرة السلة النيونية الحية
-    basketCtx.fillStyle = "#ff5500";
-    basketCtx.beginPath();
-    basketCtx.arc(ballX, ballY, 10, 0, Math.PI * 2);
-    basketCtx.fill();
-
-    // استدعاء الإطار التالي بتوقيت الشاشة الفعلي لسحق التقطيع
-    requestAnimationFrame(updateProBasketballFrame);
-}
-
-function resetBallState() {
-    isBallShot = false;
-    ballX = playerX + 30;
-    ballY = playerY - 10;
-    ballVX = 0;
-    ballVY = 0;
-}
-
-// التعديل على دالة إطلاق واجهة الـ Arena لتشغيل محرك السلة فوراً
-function hookProGameGraphicsLaunch(game) {
-    launchGameArenaZone(game);
-    if (game.type === "basketball") {
-        resetBallState();
-        document.getElementById("basketball_canvas").style.display = "block";
-        requestAnimationFrame(updateProBasketballFrame);
-    }
-}
-// 📡 تهيئة التروس والـ Canvas المركزي للمنظومة الكبرى
-let canvas = document.getElementById("basketball_canvas");
-let ctx = canvas.getContext("2d");
-
-// متغيرات عامة لإدارة الحركة واللمس 60 FPS بدون لاج
-let gameState = { active: false, score: 0, timer: 0 };
-let player = { x: 140, y: 240, width: 40, height: 40, vx: 0 };
-let ball = { x: 170, y: 230, r: 10, vx: 0, vy: 0, isShot: false };
-let target = { x: 140, y: 40, w: 60, h: 20, dir: 1, speed: 2 };
-let env = { gravity: 0.3, wind: 0, power: 0, pDir: 1, angle: 0, aDir: 1 };
-
-// 🎮 1. تحريك اللاعب للمس المباشر والانسيابي (يمين / يسار)
-function movePlayerLeft() { 
-    if (player.x > 10) { player.x -= 20; if(!ball.isShot) ball.x = player.x + 20; } 
-}
-function movePlayerRight() { 
-    if (player.x < 290) { player.x += 20; if(!ball.isShot) ball.x = player.x + 20; } 
-}
-
-// 🎰 [اللعبة 1: ماكينة الحظ الملكية الواقعية - بكرات دوارة لايف]
-let slotReels =;
-let isSlotSpinning = false;
-function runRoyalSlotEngine() {
-    if (isSlotSpinning) return;
-    isSlotSpinning = true;
-    let ticks = 0;
-    let loop = setInterval(() => {
-        slotReels = [Math.floor(Math.random()*5), Math.floor(Math.random()*5), Math.floor(Math.random()*5)];
-        renderSlotsGraphics();
-        ticks++;
-        if(ticks > 15) { clearInterval(loop); isSlotSpinning = false; checkSlotsWinLogic(); }
-    }, 80);
-}
-function renderSlotsGraphics() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let symbols = ["👑", "💎", "⚡", "🚀", "🪙"];
-    ctx.fillStyle = "#0d0022"; ctx.fillRect(10, 50, 320, 200);
-    for(let i=0; i<3; i++) {
-        ctx.fillStyle = "#2b0054"; ctx.fillRect(30 + i*100, 80, 80, 140);
-        ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 3; ctx.strokeRect(30 + i*100, 80, 80, 140);
-        ctx.font = "45px Arial"; ctx.fillText(symbols[slotReels[i]], 45 + i*100, 165);
-    }
-}
-function checkSlotsWinLogic() {
-    let win = slotReels[0] === slotReels[1] && slotReels[1] === slotReels[2];
-    gameState.score = win ? 100 : 0;
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    finalizeLiveGameRound(1, "slots", gameState.score);
-}
-
-// 🎯 [اللعبة 2: قناص ضربات الجزاء - حارس مرمى يتحرك بالذكاء الاصطناعي]
-function triggerPenaltyShot() {
-    if (ball.isShot) return;
-    ball.isShot = true;
-    ball.vx = (target.x + 30 - ball.x) * 0.08;
-    ball.vy = -7;
-}
-function runPenaltyFrame() {
-    if (!gameState.active || selectedGame.id !== 2) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // رسم الشباك والمرمى الفسفوري
-    ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 5; ctx.strokeRect(50, 50, 240, 100);
-    
-    // تحريك حارس المرمى (الذكاء الاصطناعي)
-    target.x += target.speed * target.dir;
-    if(target.x > 230 || target.x < 50) target.dir *= -1;
-    ctx.fillStyle = "#ff007f"; ctx.fillRect(target.x, 120, 40, 30); // مجسم الحارس
-    
-    // تحديث فيزياء الكرة
-    if (ball.isShot) {
-        ball.x += ball.vx; ball.y += ball.vy;
-        if (ball.y <= 150 && ball.y >= 50 && ball.x >= 50 && ball.x <= 290) {
-            // فحص الصد أو الهدف
-            if(ball.x >= target.x && ball.x <= target.x + 40) { resetBall(); } // صده الحارس
-            else { gameState.score += 50; resetBall(); } // هدف!
-        }
-        if(ball.y < 0) resetBall();
-    }
-    // رسم الكرة
-    ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    requestAnimationFrame(runPenaltyFrame);
-}
-
-// 🎲 [اللعبة 3: حجر النرد الملكي - دوران فيزيائي ثلاثي الأبعاد]
-let diceVal = 1;
-function rollDiceEngine() {
-    let ticks = 0;
-    let loop = setInterval(() => {
-        diceVal = Math.floor(Math.random()*6) + 1;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#2b0054"; ctx.fillRect(100, 80, 140, 140);
-        ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 5; ctx.strokeRect(100, 80, 140, 140);
-        ctx.fillStyle = "#fff"; ctx.font = "bold 60px Arial"; ctx.fillText(diceVal, 150, 170);
-        ticks++;
-        if(ticks > 12) { clearInterval(loop); gameState.score = diceVal * 10; finalizeLiveGameRound(3, "dice", gameState.score); }
-    }, 90);
-}
-
-// 🏀 [اللعبة 4: سلة المحترفين الواقعية الحرة 60 FPS]
-function triggerBasketballShot() {
-    if (ball.isShot) return; ball.isShot = true;
-    ball.vx = Math.sin(env.angle) * (5 + env.power * 6);
-    ball.vy = -Math.cos(env.angle) * (8 + env.power * 9);
-}
-function runBasketballFrame() {
-    if (!gameState.active || selectedGame.id !== 4) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // سهم وزاوية القوة
-    if (!ball.isShot) {
-        env.angle += 0.04 * env.aDir; if(env.angle > 0.8 || env.angle < -0.8) env.aDir *= -1;
-        env.power += 0.05 * env.pDir; if(env.power > 1 || env.power < 0) env.pDir *= -1;
-        ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 4; ctx.beginPath();
-        ctx.moveTo(ball.x, ball.y); ctx.lineTo(ball.x + Math.sin(env.angle)*40, ball.y - Math.cos(env.angle)*40); ctx.stroke();
-    }
-    // تحريك برج السلة أوتوماتيك
-    target.x += 1.5 * target.dir; if(target.x > 260 || target.x < 40) target.dir *= -1;
-    ctx.fillStyle = "#ff007f"; ctx.fillRect(target.x, target.y, 60, 6);
-    ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 3; ctx.strokeRect(target.x+10, target.y+6, 40, 15);
-    
-    if (ball.isShot) {
-        ball.x += ball.vx; ball.y += ball.vy; ball.vy += env.gravity;
-        if(ball.y <= target.y+15 && ball.y >= target.y && ball.x >= target.x && ball.x <= target.x+40 && ball.vy > 0) {
-            gameState.score += 25; resetBall();
-        }
-        if(ball.y > 320) resetBall();
-    }
-    ctx.fillStyle = "#ff5500"; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    requestAnimationFrame(runBasketballFrame);
-}
-
-// 🎯 [اللعبة 5: سهم السنتر المضيء - رادار الدوران الحركي]
-let dartAngle = 0;
-function fireDart() {
-    let diff = Math.abs(Math.sin(dartAngle));
-    if (diff < 0.15) { gameState.score += 100; } else { gameState.score = 0; }
-    finalizeLiveGameRound(5, "darts", gameState.score);
-}
-function runDartsFrame() {
-    if (!gameState.active || selectedGame.id !== 5) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // رسم لوحة الهدف المركزية
-    ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(170, 150, 80, 0, Math.PI*2); ctx.stroke();
-    ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(170, 150, 40, 0, Math.PI*2); ctx.stroke();
-    // السهم الدوار
-    dartAngle += 0.05;
-    ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 4; ctx.beginPath();
-    ctx.moveTo(170, 150); ctx.lineTo(170 + Math.sin(dartAngle)*75, 150 - Math.cos(dartAngle)*75); ctx.stroke();
-    requestAnimationFrame(runDartsFrame);
-}
-
-function resetBall() { ball.isShot = false; ball.x = player.x + 20; ball.y = 230; ball.vx = 0; ball.vy = 0; }
-// 💎 [اللعبة 6: كبسولة الرصيد الطائر - النقر السريع مع جرافيك التمدد]
-let clickerScale = 1;
-function triggerClickerTap() {
-    clickerScale = 1.3; // تمدد بصري فوري عند اللمس لمنع التقطيع
-    gameState.score += 5;
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    // تأثير الجاذبية لتقليص الحجم تدريجياً
-    setTimeout(() => { clickerScale = 1; }, 70);
-    if (gameState.score >= 150) { finalizeLiveGameRound(6, "clicker", gameState.score); }
-}
-function runClickerFrame() {
-    if (!gameState.active || selectedGame.id !== 6) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = clickerScale > 1 ? "#00ffcc" : "#ff007f";
-    ctx.shadowBlur = 20; ctx.shadowColor = ctx.fillStyle;
-    ctx.beginPath(); 
-    ctx.arc(170, 150, 50 * clickerScale, 0, Math.PI * 2); 
-    ctx.fill();
-    ctx.shadowBlur = 0; // تنظيف الكاش البصري وسحق اللاج
-    ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.fillText("اِنْقُرْ", 145, 158);
-    requestAnimationFrame(runClickerFrame);
-}
-
-// 🪨 [اللعبة 7: حجر ورقة مقص P2P التفاعلية بجرافيك الخيارات]
-let rpsChoice = -1;
-function playerRPSSelect(choice) {
-    rpsChoice = choice;
-    let botChoice = Math.floor(Math.random() * 3);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let names = ["🪨 حجر", "📜 ورقة", "✂️ مقص"];
-    ctx.fillStyle = "#2b0054"; ctx.fillRect(10, 50, 320, 200);
-    ctx.fillStyle = "#fff"; ctx.font = "22px Arial";
-    ctx.fillText("إختيارك: " + names[rpsChoice], 30, 110);
-    ctx.fillText("الخصم: " + names[botChoice], 30, 170);
-    
-    if (rpsChoice === botChoice) { gameState.score = 10; } // تعادل
-    else if ((rpsChoice===0 && botChoice===2) || (rpsChoice===1 && botChoice===0) || (rpsChoice===2 && botChoice===1)) { gameState.score = 50; } // فوز
-    else { gameState.score = 0; }
-    
-    setTimeout(() => { finalizeLiveGameRound(7, "rps", gameState.score); }, 1500);
-}
-
-// 🃏 [اللعبة 8: كارت الحظ العالي P2P - سحب واحتساب الجوائز لايف]
-function drawLuckyCard() {
-    let pCard = Math.floor(Math.random() * 10) + 1;
-    let bCard = Math.floor(Math.random() * 10) + 1;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0d0022"; ctx.fillRect(20, 40, 300, 220);
-    ctx.strokeStyle = "#ff007f"; ctx.strokeRect(40, 60, 100, 160);
-    ctx.strokeStyle = "#00ffff"; ctx.strokeRect(200, 60, 100, 160);
-    ctx.fillStyle = "#fff"; ctx.font = "bold 30px Arial";
-    ctx.fillText(pCard, 75, 150); ctx.fillText(bCard, 235, 150);
-    
-    gameState.score = pCard > bCard ? 60 : (pCard === bCard ? 15 : 0);
-    setTimeout(() => { finalizeLiveGameRound(8, "cards", gameState.score); }, 1800);
-}
-
-// 🔢 [اللعبة 9: خمن الرقم السري P2P - مدخلات اللمس الذكية]
-let secretNum = Math.floor(Math.random() * 5) + 1;
-function submitGuess(num) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#2b0054"; ctx.fillRect(10, 60, 320, 180);
-    ctx.fillStyle = "#fff"; ctx.font = "20px Arial";
-    ctx.fillText("تخمينك: " + num, 40, 120);
-    ctx.fillText("الرقم السري الحقيقي: " + secretNum, 40, 170);
-    
-    gameState.score = num === secretNum ? 80 : 0;
-    secretNum = Math.floor(Math.random() * 5) + 1; // إعادة تدوير الرقم
-    setTimeout(() => { finalizeLiveGameRound(9, "guess", gameState.score); }, 1600);
-}
-
-// 🎡 [اللعبة 10: عجلة الحظ الدوارة - دوران فيزيائي متسارع]
-let wheelAngle = 0; let wheelSpeed = 0;
-function spinLuckyWheel() {
-    if (wheelSpeed > 0) return;
-    wheelSpeed = 0.4; // إطلاق نبضة الدوران الانسيابية
-}
-function runWheelFrame() {
-    if (!gameState.active || selectedGame.id !== 10) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    wheelAngle += wheelSpeed;
-    wheelSpeed *= 0.98; // فرملة تدريجية واقعية 60 FPS
-    
-    ctx.save(); ctx.translate(170, 150); ctx.rotate(wheelAngle);
-    let colors = ["#ff007f", "#00ffff", "#ffd700", "#00ffcc"];
-    for (let i = 0; i < 4; i++) {
-        ctx.fillStyle = colors[i]; ctx.beginPath();
-        ctx.moveTo(0,0); ctx.arc(0,0, 80, i*Math.PI/2, (i+1)*Math.PI/2); ctx.fill();
-    }
-    ctx.restore();
-    // مؤشر اللقط الثابت
-    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(165, 55); ctx.lineTo(175, 55); ctx.lineTo(170, 70); ctx.fill();
-    
-    if (wheelSpeed > 0 && wheelSpeed < 0.005) {
-        wheelSpeed = 0; gameState.score = 40;
-        finalizeLiveGameRound(10, "wheel", gameState.score);
-    }
-    requestAnimationFrame(runWheelFrame);
-}
-
-// 🪙 [اللعبة 11: تدوير العملة لايف - قلب بصري ثلاثي الأبعاد]
-let coinFlipY = 0; let coinScaleY = 1; let coinTicks = 0;
-function launchCoinFlip() {
-    if (coinTicks > 0) return; coinTicks = 1;
-}
-function runCoinFrame() {
-    if (!gameState.active || selectedGame.id !== 11 || coinTicks === 0) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    coinScaleY = Math.abs(Math.sin(coinFlipY)); coinFlipY += 0.2; coinTicks++;
-    
-    ctx.fillStyle = "#ffd700"; ctx.beginPath();
-    ctx.ellipse(170, 150, 45, 45 * coinScaleY, 0, 0, Math.PI * 2); ctx.fill();
-    
-    if (coinTicks > 25) {
-        coinTicks = 0; coinFlipY = 0;
-        gameState.score = Math.random() > 0.5 ? 30 : 0;
-        finalizeLiveGameRound(11, "coin", gameState.score);
-    } else { requestAnimationFrame(runCoinFrame); }
-}
-
-// 🛒 [اللعبة 12: مخرطة الحساب السريع - جرافيك العمليات والعداد]
-let mathA = 0, mathB = 0, mathAns = 0;
-function genMathProblem() {
-    mathA = Math.floor(Math.random() * 9) + 2;
-    mathB = Math.floor(Math.random() * 9) + 2;
-    mathAns = mathA * mathB;
-    renderMathUI();
-}
-function renderMathUI() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0d0022"; ctx.fillRect(15, 60, 310, 160);
-    ctx.fillStyle = "#00ffcc"; ctx.font = "bold 28px Arial";
-    ctx.fillText(`كم ناتج: ${mathA} × ${mathB} ؟`, 70, 150);
-}
-function answerMath(userAns) {
-    gameState.score = userAns === mathAns ? 50 : 0;
-    finalizeLiveGameRound(12, "math", gameState.score);
-}
-
-// 🔮 [اللعبة 13: البلورة السحرية - نبض نيون متوهج]
-function shakeCrystalBall() {
-    gameState.score = Math.random() > 0.3 ? 35 : 0;
-    finalizeLiveGameRound(13, "crystal", gameState.score);
-}
-
-// 🧠 [اللعبة 14: بنك أسئلة العمالقة]
-function answerQuiz(option) {
-    gameState.score = option === 1 ? 60 : 0; // خيار 1 هو الصحيح للتأمين
-    finalizeLiveGameRound(14, "quiz", gameState.score);
-}
-
-// 🧩 [اللعبة 15: لغز الكلمات المتقاطعة السريع]
-function solveWordPuzzle() {
-    gameState.score = 45;
-    finalizeLiveGameRound(15, "word", gameState.score);
-}
-// ⏳ [اللعبة 16: قنبلة الوقت التنازلية - عداد التحدي وجرافيك الانفجار النيوني]
-let bombTimer = 0; let bombInterval = null;
-function startTimeBombGame() {
-    if (bombInterval) clearInterval(bombInterval);
-    bombTimer = 30; // العداد التنازلي الحركي 30 ثانية
-    document.getElementById("score_display").innerText = "الوقت المتبقي: " + bombTimer + " ثانية";
-    bombInterval = setInterval(() => {
-        bombTimer--;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // رسم هيكل القنبلة المضيء
-        ctx.fillStyle = bombTimer < 10 ? "#ff3333" : "#ff007f";
-        ctx.beginPath(); ctx.arc(170, 150, 60, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#fff"; ctx.font = "bold 24px Arial"; ctx.fillText(bombTimer, 155, 158);
+    <!-- غرفة العمليات ولعب الجولة باللمس الجرافيكي الكلي -->
+    <div class="arena-zone" id="game_arena">
+        <h2 id="active_game_title" style="color: #ffd700; text-shadow: 0 0 8px #ffd700;">اسم اللعبة</h2>
         
-        if (bombTimer <= 0) {
-            clearInterval(bombInterval);
-            gameState.score = 50; // نزول السكور بنجاح عند صمود القنبلة
-            finalizeLiveGameRound(16, "bomb", gameState.score);
+        <!-- لوحة الرسم الواقعية 60 FPS الموحدة لجميع المحركات -->
+        <canvas id="game_canvas" width="340" height="280" style="background: #000; border: 2px solid #00ffcc; border-radius: 12px; display: block; margin: 10px auto;"></canvas>
+        
+        <div class="game-panel-interactive" id="display_box" style="display: none;">🕹️</div>
+        
+        <!-- لوحة التحكم الحركية باللمس الحريري المباشر -->
+        <div class="pad-controls" id="pad_panel" style="display: none;">
+            <button class="pad-btn" id="btn_left">◀️ يسار</button>
+            <button class="action-btn" id="btn_action">🎮 إطلاق</button>
+            <button class="pad-btn" id="btn_right">يمين ▶️</button>
+        </div>
+
+        <button class="action-btn" id="action_trigger_btn" onclick="playActiveGameRound()">اِبدأ اللعب الحين ⚡</button>
+        <div id="score_display" class="score-board"></div>
+        <button class="back-btn" onclick="exitToLobbyMenu()">↩️ انسحاب وعودة للقائمة</button>
+    </div>
+
+    <script>
+        const WebApp = window.Telegram.WebApp;
+        WebApp.ready(); 
+        WebApp.expand(); 
+
+        let final_user_id = "8813635835"; 
+        let final_user_name = "قائد الإمبراطورية";
+
+        if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+            const tgUser = WebApp.initDataUnsafe.user;
+            final_user_id = String(tgUser.id);
+            final_user_name = tgUser.username ? `@${tgUser.username}` : tgUser.first_name;
         }
-    }, 1000);
-}
+        document.getElementById("user_tag").innerText = final_user_name;
+        // 📋 مصفوفة صيانة الـ 30 لعبة الرسمية بالكامل
+        const list_of_games = [
+            { id: 1, name: "🎰 1. ماكينة الحظ الملكية", icon: "🎰", type: "slots" },
+            { id: 2, name: "🎯 2. قناص ضربات الجزاء", icon: "⚽", type: "penalty" },
+            { id: 3, name: "🎲 3. حجر النرد الملكي", icon: "🎲", type: "dice" },
+            { id: 4, name: "🏀 4. سلة المحترفين", icon: "🏀", type: "basketball" },
+            { id: 5, name: "🎯 5. سهم السنتر المضيء", icon: "🎯", type: "darts" },
+            { id: 6, name: "💎 6. كبسولة الرصيد الطائر", icon: "💎", type: "clicker" },
+            { id: 7, name: "🪨 7. حجر ورقة مقص P2P", icon: "🪨", type: "rps" },
+            { id: 8, name: "🃏 8. كارت الحظ العالي P2P", icon: "🃏", type: "cards" },
+            { id: 9, name: "🔢 9. خمن الرقم السري P2P", icon: "🔢", type: "guess" },
+            { id: 10, name: "🎡 10. عجلة الحظ الدوارة", icon: "🎡", type: "wheel" },
+            { id: 11, name: "🪙 11. تدوير العملة لايف", icon: "🪙", type: "coin" },
+            { id: 12, name: "🛒 12. مخرطة الحساب السريع", icon: "🛒", type: "math" },
+            { id: 13, name: "🔮 13. البلورة السحرية", icon: "🔮", type: "crystal" },
+            { id: 14, name: "🧠 14. بنك أسئلة العمالقة", icon: "🧠", type: "quiz" },
+            { id: 15, name: "🧩 15. لغز الكلمات المتقاطعة", icon: "🧩", type: "word" },
+            { id: 16, name: "⏳ 16. قنبلة الوقت التنازلية", icon: "⏳", type: "bomb" },
+            { id: 17, name: "🌍 17. عواصم وجغرافيا العالم", icon: "🌍", type: "geo" },
+            { id: 18, name: "📜 18. كاشف الأمثال الشعبية", icon: "📜", type: "proverb" },
+            { id: 19, name: "💡 19. رادار العباقرة التفاعلي", icon: "💡", type: "iq" },
+            { id: 20, name: "🎁 20. صندوق الهدية اليومية", icon: "🎁", type: "gift" },
+            { id: 21, name: "🔍 21. اصطياد الكلمة المفقودة", icon: "🔍", type: "hunt" },
+            { id: 22, name: "🏃 22. سباق المشغلين السريع", icon: "🏃", type: "race" },
+            { id: 23, name: "🏴 23. أعلام ودول الساحة", icon: "🏴", type: "flag" },
+            { id: 24, name: "🪐 24. رحلة الفضاء الرقمية", icon: "🪐", type: "space" },
+            { id: 25, name: "🥊 25. مصارعة التحدي صامت", icon: "🥊", type: "box" },
+            { id: 26, name: "🎣 26. صياد النقاط الماهر", icon: "🎣", type: "fish" },
+            { id: 27, name: "🔑 27. فك قفل الخزنة", icon: "🔑", type: "key" },
+            { id: 28, name: "🏎️ 28. رالي السيارات المجنون", icon: "🏎️", type: "car" },
+            { id: 29, name: "🏰 29. حارس القلعة المشفرة", icon: "🏰", type: "castle" },
+            { id: 30, name: "🃏 30. وحوش الأوراق المتطابقة", icon: "🃏", type: "match" }
+        ];
 
-// 🌍 [اللعبة 17: عواصم وجغرافيا العالم - لوحة جرافيك الخيارات الديناميكية]
-function submitGeoAnswer(option) {
-    gameState.score = option === 1 ? 55 : 0; // خيار 1 هو الترس الصحيح الموثق
-    finalizeLiveGameRound(17, "geo", gameState.score);
-}
+        let selectedGame = null;
+        let animationFrameId = null;
+        let gameState = { score: 0, active: false };
 
-// 📜 [اللعبة 18: كاشف الأمثال الشعبية - مخرطة خمن المثل باللمس]
-function checkProverbGuess(isCorrect) {
-    gameState.score = isCorrect ? 40 : 0;
-    finalizeLiveGameRound(18, "proverb", gameState.score);
-}
+        const canvas = document.getElementById("game_canvas");
+        const ctx = canvas.getContext("2d");
 
-// 💡 [اللعبة 19: رادار العباقرة التفاعلي - فحص معدل الـ IQ الحركي]
-function selectIQResponse(scoreWeight) {
-    gameState.score = scoreWeight * 15;
-    finalizeLiveGameRound(19, "iq", gameState.score);
-}
+        // تروس متغيرات ألعاب الفيزياء والذكاء الاصطناعي 60 FPS
+        let player = { x: 150, y: 230, w: 40, h: 40 };
+        let ball = { x: 170, y: 220, r: 10, vx: 0, vy: 0, isShot: false };
+        let botKeeper = { x: 150, y: 60, w: 50, h: 20, dir: 1, speed: 2.5 };
+        let basketTarget = { x: 140, y: 40, w: 60, h: 8, dir: 1, speed: 2 };
+        let envArrow = { angle: 0, dir: 1, power: 0, pDir: 1 };
 
-// 🎁 [اللعبة 20: صندوق الهدية اليومية - جرافيك فتح وقذف الجوائز النيونية]
-function openDailyGiftBox() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ffd700"; ctx.fillRect(110, 90, 120, 120); // مجسم الصندوق الملكي
-    ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 4; ctx.strokeRect(110, 90, 120, 120);
-    
-    gameState.score = Math.floor(Math.random() * 50) + 20; // ضخ عشوائي مستقر للمحفظة بين 20 لـ 70
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    setTimeout(() => { finalizeLiveGameRound(20, "gift", gameState.score); }, 1400);
-}
+        // فرش الأزرار النيونية الكبرى تلقائياً في الشاشة
+        const grid = document.getElementById("grid_container");
+        list_of_games.forEach(g => {
+            const card = document.createElement("div");
+            card.className = "game-card";
+            card.innerText = g.name;
+            card.onclick = () => hookGraphicsArenaEngine(g);
+            grid.appendChild(card);
+        });
 
-// 🔍 [اللعبة 21: اصطياد الكلمة المفقودة - رادار البحث]
-function triggerWordHuntSolve() {
-    gameState.score = 65;
-    finalizeLiveGameRound(21, "hunt", gameState.score);
-}
-
-// 🏃 [اللعبة 22: سباق المشغلين السريع - سباق ركض انسيابي ضد الذكاء الاصطناعي]
-let runnerX = 20;
-function triggerPlayerSprint() {
-    if (runnerX < 280) runnerX += 25; // التحكم باللمس والركض الفوري بدون لاج
-    if (runnerX >= 280) { finalizeLiveGameRound(22, "race", 70); }
-}
-function runSprintRaceFrame() {
-    if (!gameState.active || selectedGame.id !== 22) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // رسم مسارات رالي الجري
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(10, 100); ctx.lineTo(330, 100); ctx.moveTo(10, 200); ctx.lineTo(330, 200); ctx.stroke();
-    // رسم اللاعب المسرع
-    ctx.fillStyle = "#00ffcc"; ctx.fillRect(runnerX, 130, 30, 30);
-    // خط النهاية
-    ctx.fillStyle = "#ff007f"; ctx.fillRect(290, 80, 10, 140);
-    requestAnimationFrame(runSprintRaceFrame);
-}
-
-// 🏴 [اللعبة 23: أعلام ودول الساحة - جرافيك التخمين الثنائي]
-function answerFlagQuiz(isTrue) {
-    gameState.score = isTrue ? 45 : 10;
-    finalizeLiveGameRound(23, "flag", gameState.score);
-}
-
-// 🪐 [اللعبة 24: رحلة الفضاء الرقمية - جاذبية الكواكب 60 FPS]
-let rocketY = 150;
-function thrustRocketUp() {
-    if (rocketY > 20) rocketY -= 30; // إقلاع فوري مع اللمس وسحق الجاذبية
-}
-function runSpaceTravelFrame() {
-    if (!gameState.active || selectedGame.id !== 24) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    rocketY += 0.8; // تأثير سحب الجاذبية الكونية
-    // رسم الصاروخ النيوني
-    ctx.fillStyle = "#00ffff"; ctx.beginPath();
-    ctx.moveTo(150, rocketY); ctx.lineTo(135, rocketY + 30); ctx.lineTo(165, rocketY + 30); ctx.fill();
-    
-    if (rocketY > 290) { rocketY = 150; gameState.score = 20; finalizeLiveGameRound(24, "space", gameState.score); return; }
-    requestAnimationFrame(runSpaceTravelFrame);
-}
-
-// 🎣 [اللعبة 25: صياد النقاط الماهر - اصطياد الجوائز الفيزيائية باللمس]
-let hookY = 40; let hookDir = 1; let isHookFired = false;
-function fireFishingHook() {
-    isHookFired = true;
-}
-function runFishingFrame() {
-    if (!gameState.active || selectedGame.id !== 25) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // رسم نقطة الهدف (السمكة المضيئة)
-    ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(hookY > 150 ? 170 : 80, 200, 15, 0, Math.PI * 2); ctx.fill();
-    
-    if (isHookFired) {
-        hookY += 4 * hookDir;
-        if (hookY > 220) hookDir = -1;
-        if (hookY <= 40 && hookDir === -1) {
-            isHookFired = false; hookDir = 1;
-            gameState.score = 75; // اصطياد ناجح وتوليد الداتا للمحفظة
-            finalizeLiveGameRound(25, "fish", gameState.score);
+        // 🎰 [اللعبة 1: ماكينة الحظ - بكرات جرافيك متحركة]
+        let slotIndex =; let isSlotSpinning = false;
+        function drawSlotsEngine() {
+            if (!isSlotSpinning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let symbols = ["👑", "💎", "⚡", "🚀", "🪙"];
+            ctx.fillStyle = "#0d0022"; ctx.fillRect(10, 40, 320, 200);
+            for(let i=0; i<3; i++) {
+                slotIndex[i] = Math.floor(Math.random() * symbols.length);
+                ctx.fillStyle = "#2b0054"; ctx.fillRect(35 + i*100, 70, 75, 140);
+                ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 3; ctx.strokeRect(35 + i*100, 70, 75, 140);
+                ctx.fillStyle = "#fff"; ctx.font = "38px Arial"; 
+                ctx.fillText(symbols[slotIndex[i]], 48 + i*100, 155);
+            }
         }
-    }
-    // رسم خيط الصنارة
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(170, 10); ctx.lineTo(170, hookY); ctx.stroke();
-    requestAnimationFrame(runFishingFrame);
-}
-// 🔑 [اللعبة 26: فك قفل الخزنة - جرافيك تروس السرعة والمطابقة باللمس]
-let safeDialAngle = 0;
-function rotateSafeDial() {
-    safeDialAngle += 0.4; // تدوير الترس المضيء عند كل نقرة باللمس
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // رسم هيكل الخزنة الحديدي
-    ctx.strokeStyle = "#444"; ctx.lineWidth = 12; ctx.strokeRect(80, 60, 180, 180);
-    // رسم الترس الدوّار الماستر
-    ctx.save(); ctx.translate(170, 150); ctx.rotate(safeDialAngle);
-    ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, 0, 45, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = "#ff007f"; ctx.fillRect(-8, -45, 16, 15); // لسان القفل المضيء
-    ctx.restore();
-    
-    // فحص زاوية المطابقة لفك التشفير
-    if (Math.abs(Math.sin(safeDialAngle)) < 0.1) {
-        gameState.score = 90; // فك الشفرة بنجاح وتعبئة الخزنة
-        finalizeLiveGameRound(26, "key", gameState.score);
-    }
-}
 
-// 🏎️ [اللعبة 27: رالي السيارات المجنون - مضمار متحرك 60 FPS وتفادي الحواجز]
-let carX = 150; let obstacleY = -20; let obstacleX = 120;
-function steerCarLeft() { if (carX > 60) carX -= 25; } // توجيه لمس انسيابي سريع دون لاج
-function steerCarRight() { if (carX < 240) carX += 25; }
-function runCarRacingFrame() {
-    if (!gameState.active || selectedGame.id !== 27) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // تحريك وعودة الحواجز بالسرعة الفيزيائية
-    obstacleY += 4;
-    if (obstacleY > 300) { obstacleY = -20; obstacleX = 60 + Math.random() * 160; gameState.score += 20; }
-    
-    // رسم حافة مضمار الرالي الفسفوري
-    ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.moveTo(50, 0); ctx.lineTo(50, 300); ctx.moveTo(290, 0); ctx.lineTo(290, 300); ctx.stroke();
-    
-    // رسم الحاجز الذكي
-    ctx.fillStyle = "#ff3333"; ctx.fillRect(obstacleX, obstacleY, 40, 20);
-    // رسم سيارة العميل النيونية الحية
-    ctx.fillStyle = "#00ffcc"; ctx.fillRect(carX, 220, 35, 50);
-    
-    // كاشف التصادم (Crash Check)
-    if (obstacleY >= 200 && obstacleY <= 270 && carX >= obstacleX - 25 && carX <= obstacleX + 40) {
-        finalizeLiveGameRound(27, "car", gameState.score); return;
-    }
-    
-    document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
-    requestAnimationFrame(runCarRacingFrame);
-}
+        // 🎯 [اللعبة 2: ضربات الجزاء - حارس مرمى بمطاردة الذكاء الاصطناعي AI]
+        function updatePenaltyEngine() {
+            if (!gameState.active || selectedGame.id !== 2) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 4; ctx.strokeRect(40, 40, 260, 90);
+            
+            // ذكاء اصطناعي (AI) لحساب مسار الكرة والتحرك المباشر لصدها غصب عن اللاعب
+            if (ball.isShot) {
+                if (botKeeper.x + 25 < ball.x) botKeeper.x += botKeeper.speed;
+                else if (botKeeper.x + 25 > ball.x) botKeeper.x -= botKeeper.speed;
+            } else {
+                botKeeper.x += botKeeper.speed * botKeeper.dir;
+                if (botKeeper.x > 250 || botKeeper.x < 40) botKeeper.dir *= -1;
+            }
+            ctx.fillStyle = "#ff007f"; ctx.fillRect(botKeeper.x, 110, botKeeper.w, botKeeper.h); 
+            
+            if (ball.isShot) {
+                ball.x += ball.vx; ball.y += ball.vy;
+                if (ball.y <= 130 && ball.y >= 40 && ball.x >= 40 && ball.x <= 300) {
+                    if (ball.x >= botKeeper.x && ball.x <= botKeeper.x + botKeeper.w) { resetLiveBall(); } 
+                    else { gameState.score += 50; resetLiveBall(); }
+                }
+                if (ball.y < 0 || ball.x < 0 || ball.x > 340) resetLiveBall();
+            }
+            ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+            document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
+            animationFrameId = requestAnimationFrame(updatePenaltyEngine);
+        }
 
-// 🥊 [اللعبة 28: مصارعة التحدي صامت - ضربات القوة المتبادلة P2P]
-let pHealth = 100; let bHealth = 100;
-function executeFighterPunch() {
-    bHealth -= Math.floor(Math.random() * 20) + 5; // قذف الضربة الملوكية
-    if (bHealth <= 0) {
-        gameState.score = 85; bHealth = 100; pHealth = 100;
-        finalizeLiveGameRound(28, "box", gameState.score); return;
-    }
-    // ضربة رد الفعل التلقائية للخصم
-    setTimeout(() => {
-        pHealth -= Math.floor(Math.random() * 15);
-        renderFightersUI();
-        if (pHealth <= 0) { bHealth = 100; pHealth = 100; finalizeLiveGameRound(28, "box", 0); }
-    }, 150);
-}
-function renderFightersUI() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff3333"; ctx.fillRect(20, 30, pHealth * 1.2, 15); // شريط صحة اللاعب
-    ctx.fillStyle = "#00ffcc"; ctx.fillRect(180, 30, bHealth * 1.2, 15); // شريط صحة الخصم
-    ctx.fillStyle = "#fff"; ctx.font = "14px Arial";
-    ctx.fillText("البطل", 20, 22); ctx.fillText("الخصم", 180, 22);
-}
+        // 🎲 [اللعبة 3: حجر النرد - دوران جرافيكي واقعي]
+        let diceValue = 1;
+        function renderDiceEngine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(100, 70, 140, 140);
+            ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 5; ctx.strokeRect(100, 70, 140, 140);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 55px Arial"; ctx.fillText(diceValue, 153, 158);
+        }
 
-// 🏰 [اللعبة 29: حارس القلعة المشفرة - رادار الحماية]
-function deployCastleDefense() {
-    gameState.score = 70;
-    finalizeLiveGameRound(29, "castle", gameState.score);
-}
+        // 🏀 [اللعبة 4: سلة المحترفين - سهم ومؤشر القوة التفاعلي الحريري]
+        function updateBasketballEngine() {
+            if (!gameState.active || selectedGame.id !== 4) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!ball.isShot) {
+                envArrow.angle += 0.04 * envArrow.dir; if(envArrow.angle > 0.8 || envArrow.angle < -0.8) envArrow.dir *= -1;
+                envArrow.power += 0.05 * envArrow.pDir; if(envArrow.power > 1 || envArrow.power < 0) envArrow.pDir *= -1;
+                ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 4; ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y); ctx.lineTo(ball.x + Math.sin(envArrow.angle)*40, ball.y - Math.cos(envArrow.angle)*40); ctx.stroke();
+            }
+            basketTarget.x += basketTarget.speed * basketTarget.dir;
+            if(basketTarget.x > 260 || basketTarget.x < 40) basketTarget.dir *= -1;
+            ctx.fillStyle = "#ff007f"; ctx.fillRect(basketTarget.x, basketTarget.y, basketTarget.w, basketTarget.h);
+            ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 3; ctx.strokeRect(basketTarget.x+10, basketTarget.y+8, 40, 12);
+            
+            if (ball.isShot) {
+                ball.x += ball.vx; ball.y += ball.vy; ball.vy += 0.35; 
+                if(ball.y <= basketTarget.y+15 && ball.y >= basketTarget.y && ball.x >= basketTarget.x && ball.x <= basketTarget.x+40 && ball.vy > 0) {
+                    gameState.score += 35; resetLiveBall();
+                }
+                if(ball.y > 300) resetLiveBall();
+            }
+            ctx.fillStyle = "#ff5500"; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+            document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
+            animationFrameId = requestAnimationFrame(updateBasketballEngine);
+        }
 
-// 🃏 [اللعبة 30: وحوش الأوراق المتطابقة - لعبة مطابقة الكروت P2P]
-let matchPairsFound = 0;
-function flipMatchingCardCard() {
-    matchPairsFound++;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#2b0054"; ctx.fillRect(20, 60, 300, 180);
-    ctx.fillStyle = "#00ffcc"; ctx.font = "bold 22px Arial";
-    ctx.fillText("جاري قذف ومطابقة الوحوش... 🃏", 40, 150);
-    
-    if (matchPairsFound >= 3) {
-        matchPairsFound = 0; gameState.score = 95; // كسب الجائزة الكبرى للورق
-        finalizeLiveGameRound(30, "match", gameState.score);
-    }
-}
+        // 🎯 [اللعبة 5: سهم السنتر - رادار الدوران الحركي 60 FPS]
+        let dartsAngle = 0;
+        function updateDartsEngine() {
+            if (!gameState.active || selectedGame.id !== 5) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(170, 140, 75, 0, Math.PI*2); ctx.stroke();
+            ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(170, 140, 35, 0, Math.PI*2); ctx.stroke();
+            dartsAngle += 0.05;
+            ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 4; ctx.beginPath();
+            ctx.moveTo(170, 140); ctx.lineTo(170 + Math.sin(dartsAngle)*70, 140 - Math.cos(dartsAngle)*70); ctx.stroke();
+            animationFrameId = requestAnimationFrame(updateDartsEngine);
+        }
+        // 💎 [اللعبة 6: كبسولة الرصيد الطائر - النقر الديناميكي النيوني مع جرافيك التمدد]
+        let capsuleScale = 1;
+        function updateClickerEngine() {
+            if (!gameState.active || selectedGame.id !== 6) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = capsuleScale > 1 ? "#00ffcc" : "#ff007f";
+            ctx.shadowBlur = 15; ctx.shadowColor = ctx.fillStyle;
+            ctx.beginPath(); ctx.arc(170, 140, 50 * capsuleScale, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0; // تنظيف الكاش البصري وسحق اللاج
+            ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("اِنْقُرْ", 148, 146);
+            animationFrameId = requestAnimationFrame(updateClickerEngine);
+        }
 
-// 📡 [صمام الربط والتحويل الماستر للـ 30 لعبة الواقعية]:
-function launchActiveGameRound() {
-    let id = selectedGame.id;
-    gameState.active = true;
-    gameState.score = 0;
-    
-    // تحويل التوجيه الجبري لتشغيل إطار ومحرك كل لعبة واقعية حسب هويتها
-    if(id === 1) { runRoyalSlotEngine(); }
-    else if(id === 2) { resetBall(); requestAnimationFrame(runPenaltyFrame); }
-    else if(id === 3) { rollDiceEngine(); }
-    else if(id === 4) { resetBall(); requestAnimationFrame(runBasketballFrame); }
-    else if(id === 5) { requestAnimationFrame(runDartsFrame); }
-    else if(id === 6) { requestAnimationFrame(runClickerFrame); }
-    else if(id === 10) { requestAnimationFrame(runWheelFrame); }
-    else if(id === 11) { launchCoinFlip(); requestAnimationFrame(runCoinFrame); }
-    else if(id === 12) { genMathProblem(); }
-    else if(id === 16) { startTimeBombGame(); }
-    else if(id === 20) { openDailyGiftBox(); }
-    else if(id === 22) { requestAnimationFrame(runSprintRaceFrame); }
-    else if(id === 24) { rocketY = 150; requestAnimationFrame(runSpaceTravelFrame); }
-    else if(id === 25) { requestAnimationFrame(runFishingFrame); }
-    else if(id === 26) { rotateSafeDial(); }
-    else if(id === 27) { carX = 150; obstacleY = -20; requestAnimationFrame(runCarRacingFrame); }
-    else if(id === 28) { renderFightersUI(); }
-}
+        // 🪨 [اللعبة 7: حجر ورقة مقص P2P التفاعلية بجرافيك الخيارات باللمس]
+        function drawRPSEngine(playerChoice, botChoice, resultText) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(20, 40, 300, 200);
+            ctx.fillStyle = "#fff"; ctx.font = "18px Arial";
+            ctx.fillText("إختيارك: " + playerChoice, 40, 90);
+            ctx.fillText("اختيار الذكاء الاصطناعي: " + botChoice, 40, 140);
+            ctx.fillStyle = "#00ffcc"; ctx.font = "bold 20px Arial"; ctx.fillText(resultText, 40, 200);
+        }
 
-// 🚀 [قذيفة الإطلاق الملوكية الموحدة]: قذف الداتا لايف للمحفظة أوتوماتيك بعد قفل الجولة
-function finalizeLiveGameRound(gameId, gameType, finalScore) {
-    gameState.active = false;
-    if (bombInterval) clearInterval(bombInterval);
-    
-    const packet = {
-        game_id: gameId,
-        game_type: gameType,
-        user_id: final_user_id,
-        score: finalScore
-    };
-    
-    // بث السكور وغلق نافذة اللمس شياكة أوتوماتيك
-    WebApp.sendData(JSON.stringify(packet));
-    setTimeout(() => { exitToLobbyMenu(); }, 1000);
-}
+        // 🃏 [اللعبة 8: كارت الحظ العالي P2P - سحب واحتساب الجوائز لايف]
+        function drawCardsEngine(pCard, bCard, res) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0d0022"; ctx.fillRect(20, 30, 300, 220);
+            ctx.strokeStyle = "#ff007f"; ctx.strokeRect(50, 60, 90, 140);
+            ctx.strokeStyle = "#00ffff"; ctx.strokeRect(200, 60, 90, 140);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 32px Arial";
+            ctx.fillText(pCard, 82, 140); ctx.fillText(bCard, 232, 140);
+            ctx.fillStyle = "#ffd700"; ctx.font = "bold 18px Arial"; ctx.fillText(res, 50, 230);
+        }
+
+        // 🔢 [اللعبة 9: خمن الرقم السري P2P - لوحة المدخلات الرقمية باللمس]
+        function drawGuessEngine(text) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(20, 50, 300, 180);
+            ctx.fillStyle = "#fff"; ctx.font = "18px Arial"; ctx.fillText(text, 40, 140);
+        }
+
+        // 🎡 [اللعبة 10: عجلة الحظ - فيزياء التباطؤ والفرملة التدريجية 60 FPS]
+        let wAngle = 0; let wSpeed = 0;
+        function updateWheelEngine() {
+            if (!gameState.active || selectedGame.id !== 10) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            wAngle += wSpeed; wSpeed *= 0.985; // فرملة فيزيائية انسيابية 60 FPS
+            
+            ctx.save(); ctx.translate(170, 140); ctx.rotate(wAngle);
+            let colors = ["#ff007f", "#00ffff", "#ffd700", "#00ffcc"];
+            for (let i = 0; i < 4; i++) {
+                ctx.fillStyle = colors[i]; ctx.beginPath();
+                ctx.moveTo(0,0); ctx.arc(0,0, 85, i*Math.PI/2, (i+1)*Math.PI/2); ctx.fill();
+            }
+            ctx.restore();
+            // مؤشن اللقط الثابت العلوي
+            ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(165, 45); ctx.lineTo(175, 45); ctx.lineTo(170, 60); ctx.fill();
+            
+            if (wSpeed > 0 && wSpeed < 0.003) {
+                wSpeed = 0; gameState.score = 55;
+                finalizeLiveGameRound(10, "wheel", gameState.score); return;
+            }
+            animationFrameId = requestAnimationFrame(updateWheelEngine);
+        }
+        // 🪙 [اللعبة 11: تدوير العملة - قلب بصري ثلاثي الأبعاد 60 FPS]
+        let coinFlipY = 0; let coinScaleY = 1; let coinTicks = 0;
+        function runCoinFlipEngine() {
+            if (!gameState.active || selectedGame.id !== 11) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            coinScaleY = Math.abs(Math.sin(coinFlipY)); coinFlipY += 0.25; coinTicks++;
+            
+            ctx.fillStyle = "#ffd700"; ctx.beginPath();
+            ctx.ellipse(170, 140, 45, 45 * coinScaleY, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 2; ctx.stroke();
+            
+            if (coinTicks > 24) {
+                coinTicks = 0; coinFlipY = 0;
+                gameState.score = Math.random() > 0.45 ? 40 : 0;
+                finalizeLiveGameRound(11, "coin", gameState.score); return;
+            }
+            animationFrameId = requestAnimationFrame(runCoinFlipEngine);
+        }
+
+        // 🛒 [اللعبة 12: مخرطة الحساب السريع - لوحة المسائل الحية]
+        let mathA = 0, mathB = 0, mathAns = 0;
+        function initMathQuickEngine() {
+            mathA = Math.floor(Math.random() * 8) + 3;
+            mathB = Math.floor(Math.random() * 7) + 3;
+            mathAns = mathA * mathB;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0d0022"; ctx.fillRect(15, 50, 310, 180);
+            ctx.fillStyle = "#00ffcc"; ctx.font = "bold 26px Arial";
+            ctx.fillText(`كم ناتج: ${mathA} × ${mathB} ؟`, 65, 140);
+        }
+
+        // 🔮 [اللعبة 13: البلورة السحرية - نبض نيون متوهج وحساب عشوائي ذكي]
+        let crystalAlpha = 0; let crystalDir = 1;
+        function updateCrystalEngine() {
+            if (!gameState.active || selectedGame.id !== 13) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            crystalAlpha += 0.03 * crystalDir; if(crystalAlpha > 1 || crystalAlpha < 0.2) crystalDir *= -1;
+            
+            ctx.fillStyle = `rgba(0, 255, 204, ${crystalAlpha})`;
+            ctx.shadowBlur = 25; ctx.shadowColor = "#00ffcc";
+            ctx.beginPath(); ctx.arc(170, 140, 60, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+            animationFrameId = requestAnimationFrame(updateCrystalEngine);
+        }
+
+        // 🧠 [اللعبة 14: بنك أسئلة العمالقة - جرافيك لوحة الاختيارات]
+        function drawQuizPanelUI(questionText, opt1, opt2) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(15, 40, 310, 200);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 16px Arial";
+            ctx.fillText(questionText, 30, 90);
+            ctx.fillStyle = "#ffd700";
+            ctx.fillText("[1] " + opt1, 40, 150);
+            ctx.fillText("[2] " + opt2, 40, 190);
+        }
+
+        // 🧩 [اللعبة 15: لغز الكلمات المتقاطعة السريع - جرافيك شبكة المطابقة]
+        function drawWordPuzzleUI(hint, hiddenWord) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0d0022"; ctx.fillRect(15, 40, 310, 200);
+            ctx.fillStyle = "#00ffff"; ctx.font = "16px Arial";
+            ctx.fillText("اللغز: " + hint, 30, 90);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 28px Arial";
+            ctx.fillText(hiddenWord, 100, 160);
+        }
+
+        // ⏳ [اللعبة 16: قنبلة الوقت التنازلية - فيزياء الانفجار والعداد لايف]
+        let bombTimerCount = 0; let bombClockInterval = null;
+        function startTimeBombEngine() {
+            if (bombClockInterval) clearInterval(bombClockInterval);
+            bombTimerCount = 3; // العداد السريع للحركة 3 ثوانٍ تفاديًا لأي تهنيج
+            bombClockInterval = setInterval(() => {
+                bombTimerCount--;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = bombTimerCount < 2 ? "#ff3333" : "#ff007f";
+                ctx.beginPath(); ctx.arc(170, 140, 55, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.font = "bold 26px Arial"; ctx.fillText(bombTimerCount, 158, 148);
+                
+                if (bombTimerCount <= 0) {
+                    clearInterval(bombClockInterval);
+                    gameState.score = 65;
+                    finalizeLiveGameRound(16, "bomb", gameState.score);
+                }
+            }, 1000);
+        }
+
+        // 🌍 [اللعبة 17: عواصم وجغرافيا العالم - لوحة الجرد الحركي للخرائط]
+        function drawGeoWorldUI(qText) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(15, 50, 310, 180);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText(qText, 35, 130);
+        }
+
+        // 📜 [اللعبة 18: كاشف الأمثال الشعبية - مخرطة خمن المثل باللمس]
+        function drawProverbUI(partialText) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0d0022"; ctx.fillRect(15, 60, 310, 160);
+            ctx.fillStyle = "#ffd700"; ctx.font = "bold 16px Arial"; ctx.fillText("أكمل المثل التالي بذكاء الحين:", 30, 110);
+            ctx.fillStyle = "#fff"; ctx.fillText(partialText, 30, 160);
+        }
+
+        // 💡 [اللعبة 19: رادار العباقرة التفاعلي - فحص معدل الـ IQ الحركي 60 FPS]
+        let iqRadarRadius = 10;
+        function updateIQRadarEngine() {
+            if (!gameState.active || selectedGame.id !== 19) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            iqRadarRadius += 2; if (iqRadarRadius > 80) iqRadarRadius = 10;
+            
+            ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 3; ctx.beginPath();
+            ctx.arc(170, 140, iqRadarRadius, 0, Math.PI * 2); ctx.stroke();
+            ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.arc(170, 140, 6, 0, Math.PI * 2); ctx.fill();
+            animationFrameId = requestAnimationFrame(updateIQRadarEngine);
+        }
+
+        // 🎁 [اللعبة 20: صندوق الهدية اليومية - جرافيك فتح وقذف الجوائز النيونية لايف]
+        function triggerDailyGiftEngine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ffd700"; ctx.fillRect(115, 80, 110, 110); // مجسم الصندوق
+            ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 4; ctx.strokeRect(115, 80, 110, 110);
+            gameState.score = Math.floor(Math.random() * 45) + 30; // شحن أوتوماتيك للمحفظة بين 30 لـ 75
+            document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
+            setTimeout(() => { finalizeLiveGameRound(20, "gift", gameState.score); }, 1300);
+        }
+        // 🔍 [اللعبة 21: اصطياد الكلمة المفقودة - رادار البحث]
+        function solveWordHuntEngine() {
+            gameState.score = 60;
+            finalizeLiveGameRound(21, "hunt", gameState.score);
+        }
+
+        // 🏃 [اللعبة 22: سباق المشغلين السريع - سباق ركض انسيابي 60 FPS ضد الذكاء الاصطناعي]
+        let runnerX = 20;
+        function sprintPlayerAction() {
+            if (runnerX < 280) runnerX += 30; // تحكم لمس فوري وسلس وسحق اللاج الحين
+            if (runnerX >= 280) { finalizeLiveGameRound(22, "race", 75); }
+        }
+        function runSprintRaceFrame() {
+            if (!gameState.active || selectedGame.id !== 22) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // رسم مضمار الجري
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(10, 90); ctx.lineTo(330, 90); ctx.moveTo(10, 190); ctx.lineTo(330, 190); ctx.stroke();
+            // رسم مجسم العميل المسرع
+            ctx.fillStyle = "#00ffcc"; ctx.fillRect(runnerX, 120, 25, 25);
+            // ذكاء اصطناعي (AI Runner) يركض تلقائياً لمنافستك حياً
+            let aiRunnerX = (Date.now() / 25) % 270;
+            ctx.fillStyle = "#ff007f"; ctx.fillRect(aiRunnerX, 40, 25, 25);
+            // خط النهاية الفسفوري الملكي
+            ctx.fillStyle = "#ffd700"; ctx.fillRect(290, 20, 8, 200);
+            animationFrameId = requestAnimationFrame(runSprintRaceFrame);
+        }
+
+        // 🏴 [اللعبة 23: أعلام ودول الساحة - جرافيك التخمين الثنائي]
+        function drawFlagQuizUI(flagIcon) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(20, 50, 300, 170);
+            ctx.font = "50px Arial"; ctx.fillText(flagIcon, 140, 130);
+        }
+
+        // 🪐 [اللعبة 24: رحلة الفضاء الرقمية - جاذبية الكواكب 60 FPS باللمس]
+        let rocketY = 140;
+        function thrustRocketUpAction() {
+            if (rocketY > 20) rocketY -= 35; // إقلاع فوري وسحق الجاذبية أوتوماتيك عند الضغط
+        }
+        function runSpaceTravelFrame() {
+            if (!gameState.active || selectedGame.id !== 24) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            rocketY += 0.9; // تأثير قوة سحب الجاذبية الكونية للأسفل
+            // رسم الكواكب الخلفية النيونية بالذكاء الاصطناعي للمسار
+            ctx.fillStyle = "#ff007f"; ctx.beginPath(); ctx.arc(260, 60, 20, 0, Math.PI*2); ctx.fill();
+            // رسم الصاروخ الملوكي المضيء
+            ctx.fillStyle = "#00ffff"; ctx.beginPath();
+            ctx.moveTo(170, rocketY); ctx.lineTo(155, rocketY + 25); ctx.lineTo(185, rocketY + 25); ctx.fill();
+
+            if (rocketY > 260) { rocketY = 140; gameState.score = 15; finalizeLiveGameRound(24, "space", gameState.score); return; }
+            animationFrameId = requestAnimationFrame(runSpaceTravelFrame);
+        }
+
+        // 🥊 [اللعبة 25: مصارعة التحدي صامت - ضربات القوة المتبادلة P2P لايف ضد السيرفر]
+        let pHealth = 100; let bHealth = 100;
+        function executeFighterPunchAction() {
+            bHealth -= Math.floor(Math.random() * 20) + 6; // قذف الضربة الملوكية باللمس
+            if (bHealth <= 0) {
+                gameState.score = 80; bHealth = 100; pHealth = 100;
+                finalizeLiveGameRound(25, "box", gameState.score); return;
+            }
+            // رد فعل الذكاء الاصطناعي للخصم (AI Counter Attack)
+            setTimeout(() => {
+                pHealth -= Math.floor(Math.random() * 14);
+                renderFightersBattleUI();
+                if (pHealth <= 0) { bHealth = 100; pHealth = 100; finalizeLiveGameRound(25, "box", 0); }
+            }, 120);
+        }
+        function renderFightersBattleUI() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff3333"; ctx.fillRect(20, 30, pHealth * 1.2, 12); // شريط صحتك
+            ctx.fillStyle = "#00ffcc"; ctx.fillRect(180, 30, bHealth * 1.2, 12); // شريط الخصم
+            ctx.fillStyle = "#fff"; ctx.font = "13px Arial";
+            ctx.fillText("البطل", 20, 20); ctx.fillText("الخصم (AI)", 180, 20);
+        }
+        // 🎣 [اللعبة 26: صياد النقاط الماهر - اصطياد الجوائز الفيزيائية باللمس]
+        let hookY = 40; let hookDir = 1; let isHookFired = false;
+        function fireFishingHookAction() { isHookFired = true; }
+        function runFishingFrame() {
+            if (!gameState.active || selectedGame.id !== 26) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // رسم السمكة النيونية الذهببية (الذكاء الاصطناعي يحركها أوتوماتيك للتفادي)
+            let fishX = 140 + Math.sin(Date.now()/300) * 80;
+            ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(fishX, 210, 15, 0, Math.PI * 2); ctx.fill();
+
+            if (isHookFired) {
+                hookY += 4.5 * hookDir;
+                if (hookY > 220) hookDir = -1;
+                // فحص لقط واصطياد السمكة بنجاح
+                if (hookY >= 195 && hookY <= 220 && Math.abs(170 - fishX) < 25) {
+                    isHookFired = false; hookDir = 1; hookY = 40; gameState.score = 85;
+                    finalizeLiveGameRound(26, "fish", gameState.score); return;
+                }
+                if (hookY <= 40 && hookDir === -1) { isHookFired = false; hookDir = 1; }
+            }
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(170, 10); ctx.lineTo(170, hookY); ctx.stroke();
+            animationFrameId = requestAnimationFrame(runFishingFrame);
+        }
+
+        // 🔑 [اللعبة 27: فك قفل الخزنة - تروس السرعة والمطابقة الحركية باللمس]
+        let safeDialAngle = 0;
+        function rotateSafeDialAction() {
+            safeDialAngle += 0.45;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#333"; ctx.lineWidth = 10; ctx.strokeRect(80, 50, 180, 180);
+            ctx.save(); ctx.translate(170, 140); ctx.rotate(safeDialAngle);
+            ctx.strokeStyle = "#00ffcc"; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, 45, 0, Math.PI*2); ctx.stroke();
+            ctx.fillStyle = "#ff007f"; ctx.fillRect(-6, -45, 12, 15); 
+            ctx.restore();
+            if (Math.abs(safeDialAngle % (Math.PI * 2)) < 0.15) {
+                gameState.score = 95; finalizeLiveGameRound(27, "key", gameState.score);
+            }
+        }
+
+        // 🏎️ [اللعبة 28: رالي السيارات المجنون - مضمار متحرك 60 FPS وتفادي الحواجز الذكية]
+        let carX = 150; let obstacleY = -20; let obstacleX = 120;
+        function steerCarLeftAction() { if (carX > 60) carX -= 25; }
+        function steerCarRightAction() { if (carX < 240) carX += 25; }
+        function runCarRacingFrame() {
+            if (!gameState.active || selectedGame.id !== 28) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            obstacleY += 4.5; // سرعة تدفق الحواجز الواقعية
+            if (obstacleY > 280) { obstacleY = -20; obstacleX = 60 + Math.random() * 150; gameState.score += 20; }
+
+            // حافة مضمار الرالي الفسفوري يمين ويسار لمنع التقطيع
+            ctx.strokeStyle = "#ff007f"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(50, 0); ctx.lineTo(50, 280); ctx.moveTo(290, 0); ctx.lineTo(290, 280); stroke();
+
+            ctx.fillStyle = "#ff3333"; ctx.fillRect(obstacleX, obstacleY, 35, 18); 
+            ctx.fillStyle = "#00ffcc"; ctx.fillRect(carX, 200, 30, 45); 
+
+            // كاشف التصادم الفيزيائي (Crash Counter Check)
+            if (obstacleY >= 180 && obstacleY <= 245 && carX >= obstacleX - 22 && carX <= obstacleX + 35) {
+                finalizeLiveGameRound(28, "car", gameState.score); return;
+            }
+            document.getElementById("score_display").innerText = "السكور الحالي: " + gameState.score;
+            animationFrameId = requestAnimationFrame(runCarRacingFrame);
+        }
+
+        // 🏰 [اللعبة 29: حارس القلعة المشفرة - رادار الحماية الذكي]
+        function deployCastleDefenseAction() {
+            gameState.score = 65; finalizeLiveGameRound(29, "castle", gameState.score);
+        }
+
+        // 🃏 [اللعبة 30: وحوش الأوراق المتطابقة P2P - كروت الوحوش السحرية]
+        let matchPairsCount = 0;
+        function flipMatchingMonsterCard() {
+            matchPairsCount++;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2b0054"; ctx.fillRect(20, 50, 300, 180);
+            ctx.fillStyle = "#00ffcc"; ctx.font = "bold 20px Arial";
+            ctx.fillText("جاري قذف ومطابقة الوحوش لايف... 🃏", 35, 140);
+
+            if (matchPairsCount >= 3) {
+                matchPairsCount = 0; gameState.score = 100;
+                finalizeLiveGameRound(30, "match", gameState.score);
+            }
+        }
+        // 📡 [صمام توجيه محركات الألعاب الجرافيكية والـ Canvas واللمس 60 FPS الموحد]:
+        function hookGraphicsArenaEngine(game) {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (bombClockInterval) clearInterval(bombClockInterval);
+
+            selectedGame = game;
+            gameState.active = true;
+            gameState.score = 0;
+
+            document.getElementById("main_lobby").style.display = "none";
+            document.getElementById("game_arena").style.display = "block";
+            document.getElementById("active_game_title").innerText = game.name;
+            document.getElementById("score_display").innerText = "السكور الحالي: 0";
+
+            // الفرز والتوجيه الجبري لتشغيل الكانفاس أو لوحة العرض حسب فئة ونوع اللعبة الواقعية
+            if (["penalty", "basketball", "darts", "clicker", "wheel", "coin", "iq", "race", "space", "fish", "key", "car", "box"].includes(game.type)) {
+                canvas.style.display = "block";
+                document.getElementById("display_box").style.display = "none";
+                document.getElementById("pad_panel").style.display = "flex";
+                document.getElementById("action_trigger_btn").style.display = "none";
+
+                // ربط أحداث أزرار اللمس الفردية بالمعالج الفيزيائي فوراً
+                document.getElementById("btn_left").onclick = () => { if(game.type==="car") steerCarLeftAction(); else movePlayerLeft(); };
+                document.getElementById("btn_right").onclick = () => { if(game.type==="car") steerCarRightAction(); else movePlayerRight(); };
+                document.getElementById("btn_action").onclick = () => {
+                    if (game.type === "penalty") triggerPenaltyShot();
+                    else if (game.type === "basketball") triggerBasketballShot();
+                    else if (game.type === "darts") fireDart();
+                    else if (game.type === "clicker") { capsuleScale = 1.25; gameState.score += 5; setTimeout(() => capsuleScale = 1, 60); if(gameState.score >= 100) finalizeLiveGameRound(6,"clicker",gameState.score); }
+                    else if (game.type === "wheel") { if(wSpeed===0) wSpeed = 0.38; }
+                    else if (game.type === "coin") { if(coinTicks===0) coinTicks = 1; requestAnimationFrame(runCoinFlipEngine); }
+                    else if (game.type === "race") sprintPlayerAction();
+                    else if (game.type === "space") thrustRocketUpAction();
+                    else if (game.type === "fish") fireFishingHookAction();
+                    else if (game.type === "key") rotateSafeDialAction();
+                    else if (game.type === "box") executeFighterPunchAction();
+                };
+
+                // إشعال الإطار الرسومي الخاص باللعبة المحددة
+                if (game.type === "penalty") { resetLiveBall(); botKeeper.x = 150; requestAnimationFrame(updatePenaltyEngine); }
+                else if (game.type === "basketball") { resetLiveBall(); requestAnimationFrame(updateBasketballEngine); }
+                else if (game.type === "darts") requestAnimationFrame(updateDartsEngine);
+                else if (game.type === "clicker") requestAnimationFrame(updateClickerEngine);
+                else if (game.type === "wheel") { wSpeed = 0; wAngle = 0; requestAnimationFrame(updateWheelEngine); }
+                else if (game.type === "iq") requestAnimationFrame(updateIQRadarEngine);
+                else if (game.type === "race") { runnerX = 20; requestAnimationFrame(runSprintRaceFrame); }
+                else if (game.type === "space") { rocketY = 140; requestAnimationFrame(runSpaceTravelFrame); }
+                else if (game.type === "fish") { hookY = 40; isHookFired = false; hookDir = 1; requestAnimationFrame(runFishingFrame); }
+                else if (game.type === "key") rotateSafeDialAction();
+                else if (game.type === "car") { carX = 150; obstacleY = -20; requestAnimationFrame(runCarRacingFrame); }
+                else if (game.type === "box") { pHealth = 100; bHealth = 100; renderFightersBattleUI(); }
+            } else {
+                canvas.style.display = "none";
+                document.getElementById("display_box").style.display = "flex";
+                document.getElementById("pad_panel").style.display = "none";
+                document.getElementById("action_trigger_btn").style.display = "block";
+
+                if (game.type === "slots") { isSlotSpinning = true; canvas.style.display = "block"; document.getElementById("display_box").style.display = "none"; document.getElementById("action_trigger_btn").style.display = "none"; let sTicks=0; let sLoop=setInterval(()=>{ slotReels=[Math.floor(Math.random()*5),Math.floor(Math.random()*5),Math.floor(Math.random()*5)]; drawSlotsEngine(); sTicks++; if(sTicks>12){ clearInterval(sLoop); isSlotSpinning=false; let w=slotReels===slotReels&&slotReels===slotReels; gameState.score=w?120:0; finalizeLiveGameRound(1,"slots",gameState.score); } },80); }
+                else if (game.type === "dice") { canvas.style.display = "block"; document.getElementById("display_box").style.display = "none"; document.getElementById("action_trigger_btn").style.display = "none"; let dTicks=0; let dLoop=setInterval(()=>{ diceValue=Math.floor(Math.random()*6)+1; renderDiceEngine(); dTicks++; if(dTicks>10){ clearInterval(dLoop); finalizeLiveGameRound(3,"dice",diceValue*15); } },90); }
+                else if (game.type === "rps") { document.getElementById("display_box").innerHTML = '<button class="action-btn" onclick="playerRPSSelectAction(0)">🪨 حجر</button><button class="action-btn" onclick="playerRPSSelectAction(1)">📜 ورقة</button><button class="action-btn" onclick="playerRPSSelectAction(2)">✂️ مقص</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+                else if (game.type === "cards") { document.getElementById("display_box").innerHTML = '<button class="action-btn" onclick="triggerLuckyCardDraw()">🃏 اسحب كارت الحظ</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+                else if (game.type === "guess") { document.getElementById("display_box").innerHTML = '<p style="font-size:14px; margin-bottom:5px;">خمن رقم من 1 لـ 3:</p><button class="action-btn" onclick="submitGuessAction(1)">1</button><button class="action-btn" onclick="submitGuessAction(2)">2</button><button class="action-btn" onclick="submitGuessAction(3)">3</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+                else if (game.type === "math") { document.getElementById("action_trigger_btn").style.display = "none"; canvas.style.display = "block"; document.getElementById("display_box").style.display = "none"; initMathQuickEngine(); document.getElementById("score_display").innerHTML = `<br><button class="action-btn" onclick="answerMathAction(${mathAns})">${mathAns}</button><button class="action-btn" onclick="answerMathAction(${mathAns+10})">${mathAns+10}</button>`; }
+                else if (game.type === "crystal") { document.getElementById("display_box").innerHTML = '<button class="action-btn" onclick="triggerCrystalBallShake()">🔮 المس البلورة السحرية الحين</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+                else if (game.type === "quiz") { document.getElementById("action_trigger_btn").style.display = "none"; drawQuizPanelUI("ما عاصمة مصر الحقيقية؟","1. القاهرة","2. الإسكندرية"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="answerQuizAction(1)">خيار 1</button><button class="action-btn" onclick="answerQuizAction(2)">خيار 2</button>'; }
+                else if (game.type === "word") { document.getElementById("action_trigger_btn").style.display = "none"; drawWordPuzzleUI("عكس كلمة (نهار) هو:","ل _ _ _"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="solveWordPuzzleAction()">🧩 حل اللغز الحين</button>'; }
+                else if (game.type === "bomb") { document.getElementById("action_trigger_btn").style.display = "none"; canvas.style.display = "block"; document.getElementById("display_box").style.display = "none"; startTimeBombEngine(); }
+                else if (game.type === "geo") { document.getElementById("action_trigger_btn").style.display = "none"; drawGeoWorldUI("أي قارة تقع فيها دولة البرازيل؟"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="submitGeoAnswerAction(1)">أمريكا الجنوبية</button><button class="action-btn" onclick="submitGeoAnswerAction(2)">أفريقيا</button>'; }
+                else if (game.type === "proverb") { document.getElementById("action_trigger_btn").style.display = "none"; drawProverbUI("النقود في الغربة وطن، والفقر في... ؟"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="checkProverbGuessAction(true)">الوطن غربة</button><button class="action-btn" onclick="checkProverbGuessAction(false)">البيت راحة</button>'; }
+                else if (game.type === "hunt") { document.getElementById("action_trigger_btn").style.display = "none"; drawGuessEngine("ابحث عن كلمة (الملك) المخفية في اللوحة الحين"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="solveWordHuntEngine()">🔍 لقطت الكلمة!</button>'; }
+                else if (game.type === "flag") { document.getElementById("action_trigger_btn").style.display = "none"; drawFlagQuizUI("🇸🇦"); document.getElementById("score_display").innerHTML = '<br><button class="action-btn" onclick="answerFlagQuizAction(true)">المملكة العربية السعودية</button><button class="action-btn" onclick="answerFlagQuizAction(false)">مصر</button>'; }
+                else if (game.type === "castle") { document.getElementById("display_box").innerHTML = '<button class="action-btn" onclick="deployCastleDefenseAction()">🏰 فعّل درع الدفاع الملكي</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+                else if (game.type === "match") { document.getElementById("display_box").innerHTML = '<button class="action-btn" onclick="flipMatchingMonsterCard()">🃏 اكشف وحوش الأوراق</button>'; document.getElementById("action_trigger_btn").style.display = "none"; }
+            }
+        }
+
+        // توابع الألعاب الفورية لعدم التعليق في الواجهة
+        function playerRPSSelectAction(c){let names=["حجر","ورقة","مقص"];let b=Math.floor(Math.random()*3);let res=(c===b)?"تعادل":( (c===0&&b===2)||(c===1&&b===0)||(c===2&&b===1) )?"🏆 كسبت!":"❌ خسرت!";canvas.style.display="block";document.getElementById("display_box").style.display="none";drawRPSEngine(names[c],names[b],res);setTimeout(()=>finalizeLiveGameRound(7,"rps",(res.includes("كسبت"))?45:0),1400);}
+        function triggerLuckyCardDraw(){let p=Math.floor(Math.random()*10)+2;let b=Math.floor(Math.random()*10)+1;let r=p>b?"🏆 فوز ساحق!":(p===b)?"تعادل":"خسارة";canvas.style.display="block";document.getElementById("display_box").style.display="none";drawCardsEngine(p,b,r);setTimeout(()=>finalizeLiveGameRound(8,"cards",p>b?50:0),1500);}
+        function submitGuessAction(n){let s=Math.floor(Math.random()*3)+1;canvas.style.display="block";document.getElementById("display_box").style.display="none";drawGuessEngine(n===s?"🏆 تخمينك صح 100%!":"❌ الرقم كان: "+s);setTimeout(()=>finalizeLiveGameRound(9,"guess",n===s?70:0),1400);}
+        function answerMathAction(ans){if(ans===mathAns)gameState.score=40;else gameState.score=0;finalizeLiveGameRound(12,"math",gameState.score);}
+        function triggerCrystalBallShake(){canvas.style.display="block";document.getElementById("display_box").style.display="none";gameState.score=35;finalizeLiveGameRound(13,"crystal",gameState.score);}
+        function answerQuizAction(opt){gameState.score=(opt===1)?50:0;finalizeLiveGameRound(14,"quiz",gameState.score);}
+        function solveWordPuzzleAction(){gameState.score=40;finalizeLiveGameRound(15,"word",gameState.score);}
+        function submitGeoAnswerAction(opt){gameState.score=(opt===1)?50:0;finalizeLiveGameRound(17,"geo",gameState.score);}
+        function checkProverbGuessAction(t){gameState.score=t?45:0;finalizeLiveGameRound(18,"proverb",gameState.score);}
+        function answerFlagQuizAction(t){gameState.score=t?40:0;finalizeLiveGameRound(23,"flag",gameState.score);}
+
+        function resetLiveBall() { ball.isShot = false; ball.x = player.x + 20; ball.y = 220; ball.vx = 0; ball.vy = 0; }
+        function movePlayerLeft() { if(player.x > 20) { player.x -= 20; if(!ball.isShot) ball.x = player.x + 20; } }
+        function movePlayerRight() { if(player.x < 280) { player.x += 20; if(!ball.isShot) ball.x = player.x + 20; } }
+        function exitToLobbyMenu() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (bombClockInterval) clearInterval(bombClockInterval);
+            document.getElementById("main_lobby").style.display = "block";
+            document.getElementById("game_arena").style.display = "none";
+            selectedGame = null; gameState.active = false;
+        }
+
+        function playActiveGameRound() {
+            if(!selectedGame) return;
+            gameState.score = Math.floor(Math.random() * 35) + 20;
+            finalizeLiveGameRound(selectedGame.id, selectedGame.type, gameState.score);
+        }
+
+        // 🚀 [قذيفة البث الحي المشفرة]: إرسال السكور وغلق النافذة التفاعلية أوتوماتيكياً بعد الحساب الرياضي الجديد
+        function finalizeLiveGameRound(gameId, gameType, finalScore) {
+            gameState.active = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (bombClockInterval) clearInterval(bombClockInterval);
+            
+            // ⚡ [تطبيق القانون التكتيكي الصارم للـ VIP]: تقسيم الجذر الرابع للسكور على 2 دائماً
+            let pointsWon = Math.floor(Math.pow(finalScore || 16, 0.25) / 2) + 10;
+
+            const packet = {
+                game_id: gameId,
+                game_type: gameType,
+                user_id: final_user_id,
+                score: pointsWon
+            };
+
+            // بث الداتا الفوري للبوت القائد لإشعال الحنفية المركزية
+            WebApp.sendData(JSON.stringify(packet));
+            setTimeout(() => { exitToLobbyMenu(); }, 900);
+        }
     </script>
 </body>
 </html>

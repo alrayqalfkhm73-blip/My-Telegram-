@@ -2294,8 +2294,9 @@ async def handle_pro_games_actions_and_modes(client, callback_query):
         
         # حقن مسار الألعاب المفتوح لاجتياز فلاتر الحظر 🚀 [حقن الرابط الأخضر الملوكي]: تشغيل صالة 
         # الـ 30 لعبة باللمس الحقيقية لايف للزبائن والـ VIP
-        # 🚀 [إشعال كسر الكاش الجبري V4]: إجبار تليجرام على تمرير الهوية الحية حياً بدون متصفح ميت
-        web_app_url = f"https://alrayqalfkhm73-blip.github.io/My-Telegram-/{user_id}"
+        # 🚀 [بروتوكول تفجير الكاش الجبري بالثواني]: إجبار تليجرام على نسف الشاشة الرمادية وجرف الجرافيك الواقعي الحين
+        import time
+        web_app_url = f"https://alrayqalfkhm73-blip.github.io/My-Telegram-/{int(time.time())}&uid={user_id}"
         
         game_keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎮 اِفتح شاشة اللعبة باللمس الحين 🎮", web_app=enums.WebAppInfo(url=web_app_url))],
